@@ -1,7 +1,7 @@
 const router = require(`express`).Router();
 
 router.get(`/`, (req, res) => {
-  res.status(200).json({ message: `INI DI ROUTE HOME` });
+  res.status(200).json({ message: `Server is running...` });
 });
 router.use(`/users`, require(`./usersRouter`));
 router.use(`/products`, require(`./productsRouter`));
