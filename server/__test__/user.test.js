@@ -466,4 +466,29 @@ describe('GET /users', () => {
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Array)
     })
+
+    test('SUCCESS : FIND ALL ADMIN', async () => {
+        const response = await request(app)
+        .get(`/users?role=admin`)
+        .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Array)
+    })
+
+    test('SUCCESS : FIND ALL SALES', async () => {
+        const response = await request(app)
+        .get(`/users?role=sales`)
+        .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Array)
+    })
+
+    test('FAILED : FIND ALL SALES/ADMIN - wrong query role', async () => {
+        const response = await request(app)
+        .get(`/users?role=user`)
+        .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(400)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty("message", "Role is invalid")
+    })
 })
