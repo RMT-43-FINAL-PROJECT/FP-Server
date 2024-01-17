@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { db } = require("../configs/mongodb");
 
 class ProductsController {
@@ -10,9 +11,10 @@ class ProductsController {
       next(error);
     }
   }
-  static async template(req, res, next) {
+
+  static async getDetailProduct(req, res, next) {
     try {
-      const data = `template`;
+      const data = await db.collection("products").findOne({_id: new ObjectId(req.params.id)});
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
