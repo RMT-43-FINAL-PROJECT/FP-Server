@@ -9,6 +9,7 @@ db.createCollection("products", {
         "name",
         "image",
         "category",
+        "stock",
         "price",
         "discQty",
         "discPercent",
