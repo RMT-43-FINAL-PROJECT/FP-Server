@@ -1,6 +1,7 @@
 const { db } = require("../configs/mongodb")
-const { hashPassword } = require("../helpers/bcryptjs")
-const { validateRegister, validateGetUserByEmail } = require("../helpers/validator")
+const { hashPassword, comparePassword } = require("../helpers/bcryptjs")
+const { signToken } = require("../helpers/jwt")
+const { validateRegister, validateEmail } = require("../helpers/validator")
 
 class UsersController {
   static async getAll(req, res, next) {
@@ -13,10 +14,9 @@ class UsersController {
     }
   }
 
-  static async checkUniqueEmail(email, res) { // Just for checking email
+  static async checkEmailOnDb(email, res) { // Just for checking email
     let findUser = await db.collection("users").findOne(
-      { email },
-      { projection: { password: 0 } }
+      { email }
     )
     return findUser
   }
@@ -27,7 +27,7 @@ class UsersController {
       if (name === undefined || email === undefined || password === undefined || mobilePhone === undefined || address === undefined) {
         throw { name: 'Missing required fields' }
       }
-      let checkUnique = await UsersController.checkUniqueEmail(email)
+      let checkUnique = await UsersController.checkEmailOnDb(email)
       if (checkUnique) {
         throw { name: "This email has already been registered" }
       }
@@ -59,13 +59,38 @@ class UsersController {
     }
   }
 
+  static async login(req, res, next) {
+    try {
+      let { email, password } = req.body
+      if (!email) {
+        throw { name: 'Email is required' }
+      }
+      if (!password) {
+        throw { name: 'Password is required' }
+      }
+      let verifyEmail = await UsersController.checkEmailOnDb(email)
+      if (!verifyEmail) {
+        throw { name: 'Invalid email/password' }
+      }
+      let verifyPassword = comparePassword(password, verifyEmail.password)
+      if (!verifyPassword) {
+        throw { name: 'Invalid email/password' }
+      }
+      let access_token = signToken(verifyEmail)
+      res.status(200).json({ access_token })
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
   static async getUserByEmail(req, res, next) {
     try {
       let { email } = req.body
       if (email === undefined) {
         throw { name: 'Email is required' }
       }
-      validateGetUserByEmail(email)
+      validateEmail(email)
       let findUser = await db.collection("users").findOne(
         { email },
         { projection: { password: 0 } }
