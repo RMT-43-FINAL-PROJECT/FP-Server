@@ -47,6 +47,10 @@ function errorHandler(error, req, res, next) {
             statusCode = 401
             message = error.name
             break
+        case "Invalid Token":
+            statusCode = 401
+            message = error.name
+            break
         case 'No user found with this email':
             statusCode = 404
             message = error.name

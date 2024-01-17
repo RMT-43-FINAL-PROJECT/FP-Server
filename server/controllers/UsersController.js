@@ -4,9 +4,11 @@ const { signToken } = require("../helpers/jwt")
 const { validateRegister, validateEmail } = require("../helpers/validator")
 
 class UsersController {
-  static async getAll(req, res, next) {
+  static async getAllUser(req, res, next) {
     try {
-      const data = await db.collection("users").find().toArray()
+      const data = await db.collection("users").find({}, {
+        projection: { password: 0 }
+      }).toArray()
       res.status(200).json(data)
     } catch (error) {
       console.log(error)

@@ -204,6 +204,73 @@ describe('POST /users/register', () => {
     })
 })
 
+describe('GET /users/login', () => {
+    test('SUCCESS : LOGIN', async () => {
+        let dataBody = {
+            email: "neymar@gmail.com",
+            password: "12345",
+        }
+        const response = await request(app)
+            .post('/users/login')
+            .send(dataBody)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty('access_token', expect.any(String))
+    })
+
+    test('FAILED : LOGIN - without email', async () => {
+        let dataBody = {
+            email: "",
+            password: "12345",
+        }
+        const response = await request(app)
+            .post('/users/login')
+            .send(dataBody)
+        expect(response.status).toBe(400)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty('message', 'Email is required')
+    })
+
+    test('FAILED : LOGIN - without password', async () => {
+        let dataBody = {
+            email: "neymar@gmail.com",
+            password: "",
+        }
+        const response = await request(app)
+            .post('/users/login')
+            .send(dataBody)
+        expect(response.status).toBe(400)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty('message', 'Password is required')
+    })
+
+    test('FAILED : LOGIN - wrong email', async () => {
+        let dataBody = {
+            email: "neymar111@gmail.com",
+            password: "12345",
+        }
+        const response = await request(app)
+            .post('/users/login')
+            .send(dataBody)
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty('message', 'Invalid email/password')
+    })
+
+    test('FAILED : LOGIN - wrong password', async () => {
+        let dataBody = {
+            email: "neymar@gmail.com",
+            password: "1234522222",
+        }
+        const response = await request(app)
+            .post('/users/login')
+            .send(dataBody)
+        expect(response.status).toBe(401)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty('message', 'Invalid email/password')
+    })
+})
+
 describe('GET /users/finduser-email', () => {
     test('SUCCESS : FIND USER BY EMAIL', async () => {
         let dataBody = {
