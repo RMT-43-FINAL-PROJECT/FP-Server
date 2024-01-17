@@ -14,21 +14,19 @@ class UsersController {
   }
 
   static async checkUniqueEmail(email, res) { // Just for checking email
-    try {
-      let findUser = await db.collection("users").findOne(
-        { email },
-        { projection: { password: 0 } }
-      )
-      return findUser
-    } catch (error) {
-      console.log(error)
-      throw error
-    }
+    let findUser = await db.collection("users").findOne(
+      { email },
+      { projection: { password: 0 } }
+    )
+    return findUser
   }
 
   static async register(req, res, next) {
     try {
       let { name, email, password, mobilePhone, address } = req.body
+      if (name === undefined || email === undefined || password === undefined || mobilePhone === undefined || address === undefined) {
+        throw { name: 'Missing required fields' }
+      }
       let checkUnique = await UsersController.checkUniqueEmail(email)
       if (checkUnique) {
         throw { name: "This email has already been registered" }
@@ -64,6 +62,9 @@ class UsersController {
   static async getUserByEmail(req, res, next) {
     try {
       let { email } = req.body
+      if (email === undefined) {
+        throw { name: 'Email is required' }
+      }
       validateGetUserByEmail(email)
       let findUser = await db.collection("users").findOne(
         { email },

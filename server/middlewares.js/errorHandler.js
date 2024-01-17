@@ -39,12 +39,14 @@ function errorHandler(error, req, res, next) {
             statusCode = 400
             message = error.name
             break
+        case 'Missing required fields':
+            statusCode = 400
+            message = error.name
+            break
         case 'No user found with this email':
             statusCode = 404
             message = error.name
             break
-        default:
-            break;
     }
 
     res.status(statusCode).json({ message: message });
