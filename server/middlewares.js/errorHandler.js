@@ -59,6 +59,10 @@ function errorHandler(error, req, res, next) {
             statusCode = 404
             message = error.name
             break
+        case 'No user found with this ID':
+            statusCode = 404
+            message = error.name
+            break
     }
 
     res.status(statusCode).json({ message: message });

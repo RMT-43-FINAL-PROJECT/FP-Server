@@ -11,12 +11,7 @@ const client = new MongoClient(uri, {
 
 const db = client.db(process.env.NODE_ENV === 'test' ? "fp-rmt-43-test" : "fp-rmt-43");
 
-function getCollection(collectionName) {
-  return db.collection(collectionName);
-}
-
 module.exports = {
   db,
-  getCollection,
   client
 };
