@@ -35,7 +35,7 @@ function validateRegister({ name, email, password, mobilePhone, address }) {
     }
 }
 
-function validateGetUserByEmail(email) {
+function validateEmail(email) {
     let isEmailNotEmpty = validator.isEmpty(email)
     if (isEmailNotEmpty) {
         throw { name: 'Email is required' }
@@ -48,5 +48,5 @@ function validateGetUserByEmail(email) {
 
 module.exports = {
     validateRegister,
-    validateGetUserByEmail,
+    validateEmail,
 }

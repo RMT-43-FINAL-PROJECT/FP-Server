@@ -43,6 +43,18 @@ function errorHandler(error, req, res, next) {
             statusCode = 400
             message = error.name
             break
+        case 'Invalid email/password':
+            statusCode = 401
+            message = error.name
+            break
+        case "Invalid Token":
+            statusCode = 401
+            message = error.name
+            break
+        case 'Forbidden Access. Admin only':
+            statusCode = 403
+            message = error.name
+            break
         case 'No user found with this email':
             statusCode = 404
             message = error.name
