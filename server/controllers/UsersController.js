@@ -7,7 +7,15 @@ const { ObjectId } = require('mongodb')
 class UsersController {
   static async getAllUser(req, res, next) {
     try {
-      const data = await db.collection("users").find({}, {
+      let { role } = req.query
+      let query = {}
+      if (role) {
+        if (role !== 'sales' && role !== "admin") {
+          throw { name: "Role is invalid" }
+        }
+        query = { role: role }
+      }
+      const data = await db.collection("users").find(query, {
         projection: { password: 0 }
       }).toArray()
       res.status(200).json(data)
