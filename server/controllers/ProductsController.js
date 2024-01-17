@@ -21,6 +21,17 @@ class ProductsController {
       next(error);
     }
   }
+
+  static async addProduct(req, res, next) {
+    try {
+      const {name, image, category, stock, price, discQty, discPercent, isAvailable} = req.body
+      const data = await db.collection("products").insertOne({name, image, category, stock, price, discQty, discPercent, isAvailable, createdAt: new Date(), updatedAt: new Date()});
+      res.status(201).json({message: `Update Product With ID ${data.insertedId} Successfull`});
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }
 
 module.exports = ProductsController;
