@@ -8,9 +8,6 @@ async function authentication(req, res, next) {
             throw { name: "Invalid Token" }
         }
         let splittedToken = authorization.split(' ')
-        if (splittedToken.length < 2) {
-            throw { name: "invalidToken" }
-        }
         if (splittedToken[0] !== 'Bearer') {
             throw { name: "Invalid Token" }
         }

@@ -2,6 +2,7 @@ const { db } = require("../configs/mongodb")
 const { hashPassword, comparePassword } = require("../helpers/bcryptjs")
 const { signToken } = require("../helpers/jwt")
 const { validateRegister, validateEmail } = require("../helpers/validator")
+const { ObjectId } = require('mongodb')
 
 class UsersController {
   static async getAllUser(req, res, next) {
@@ -26,7 +27,12 @@ class UsersController {
   static async register(req, res, next) {
     try {
       let { name, email, password, mobilePhone, address } = req.body
-      if (name === undefined || email === undefined || password === undefined || mobilePhone === undefined || address === undefined) {
+      if (name === undefined ||
+        email === undefined ||
+        password === undefined ||
+        mobilePhone === undefined ||
+        address === undefined
+      ) {
         throw { name: 'Missing required fields' }
       }
       let checkUnique = await UsersController.checkEmailOnDb(email)
@@ -99,6 +105,23 @@ class UsersController {
       )
       if (!findUser) {
         throw { name: 'No user found with this email' }
+      }
+      return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async getUserByIdParams(req, res, next) {
+    try {
+      let { idUser } = req.params
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(idUser) },
+        { projection: { password: 0 } }
+      )
+      if (!findUser) {
+        throw { name: 'No user found with this ID' }
       }
       return res.status(200).json(findUser)
     } catch (error) {
