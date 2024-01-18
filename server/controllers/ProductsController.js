@@ -52,11 +52,29 @@ class ProductsController {
       const dataImage = await cloudinary.uploader.upload(dataURI,
         { public_id: `${req.file.originalname}_${randomUUID()}`, folder: `products/image` });
 
+      const data = await db.collection("products").findOne({ _id: new ObjectId(req.params.id) });
+      if (!data) {
+        throw { name: `Product Not Found` }
+      }
       const { name, category, stock, price, discQty, discPercent, isAvailable } = req.body
       await db.collection("products").updateOne(
         { "_id": new ObjectId(req.params.id) },
         { $set: { name, image: dataImage.secure_url, category, stock, price, discQty, discPercent, isAvailable } });
       res.status(200).json({ message: `Update Product With ID ${req.params.id} Successfull` });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async removeProduct(req, res, next) {
+    try {
+      const data = await db.collection("products").findOne({ _id: new ObjectId(req.params.id) });
+      if (!data) {
+        throw { name: `Product Not Found` }
+      }
+      await db.collection("products").deleteOne({ _id: new ObjectId(req.params.id) });
+      res.status(200).json({ message: `Delete Product With ID ${req.params.id} Successfull` });
     } catch (error) {
       console.log(error);
       next(error);
