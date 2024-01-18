@@ -8,5 +8,6 @@ const upload = multer({ storage: storage })
 router.get(`/`, ProductsController.getAll);
 router.get(`/:id`, ProductsController.getDetailProduct);
 router.post(`/`, upload.single('image'), ProductsController.addProduct);
+router.put(`/:id`, upload.single('image'), ProductsController.updateProduct);
 
 module.exports = router;
