@@ -38,7 +38,25 @@ class ProductsController {
 
       const { name, category, stock, price, discQty, discPercent, isAvailable } = req.body
       const data = await db.collection("products").insertOne({ name, image: dataImage.secure_url, category, stock, price, discQty, discPercent, isAvailable, createdAt: new Date(), updatedAt: new Date() });
-      res.status(201).json({ message: `Update Product With ID ${data.insertedId} Successfull` });
+      res.status(201).json({ message: `Create Product With ID ${data.insertedId} Successfull` });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async updateProduct(req, res, next) {
+    try {
+      const base64File = Buffer.from(req.file.buffer).toString(`base64`)
+      const dataURI = `data:${req.file.mimetype};base64,${base64File}`
+      const dataImage = await cloudinary.uploader.upload(dataURI,
+        { public_id: `${req.file.originalname}_${randomUUID()}`, folder: `products/image` });
+
+      const { name, category, stock, price, discQty, discPercent, isAvailable } = req.body
+      await db.collection("products").updateOne(
+        { "_id": new ObjectId(req.params.id) },
+        { $set: { name, image: dataImage.secure_url, category, stock, price, discQty, discPercent, isAvailable } });
+      res.status(200).json({ message: `Update Product With ID ${req.params.id} Successfull` });
     } catch (error) {
       console.log(error);
       next(error);
