@@ -4,6 +4,11 @@ const { client } = require("../configs/mongodb");
 const { ObjectId } = require("mongodb");
 const { hashPassword } = require("../helpers/bcryptjs");
 
+const path = require("path");
+const fs = require("fs");
+const filePath = path.resolve(__dirname, "./asset/TokoSehat.jpg");
+const imageBuffer = fs.readFileSync(filePath); // Buffer
+
 let idStore1;
 let idStore2;
 let idProduct1;
@@ -263,6 +268,309 @@ describe("GET /stores/:id", () => {
     const response = await request(app).get(`/stores/${falseId}`);
 
     expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
+describe("POST /stores", () => {
+  test("Success create store should return message with id", async () => {
+    const newStore = {
+      name: "Toko Sehat Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("address", newStore.address)
+      .field("joinDate", newStore.joinDate)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(201);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Success create store without status", async () => {
+    const newStore = {
+      name: "Toko Sehat Test 2",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("address", newStore.address)
+      .field("joinDate", newStore.joinDate)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(201);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Success create store without joinDate", async () => {
+    const newStore = {
+      name: "Toko Sehat Test 3",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("address", newStore.address)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(201);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Failed create store without name", async () => {
+    const newStore = {
+      name: "Toko Sehat Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("address", newStore.address)
+      .field("joinDate", newStore.joinDate)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Failed create store without unique name", async () => {
+    const newStore = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("address", newStore.address)
+      .field("joinDate", newStore.joinDate)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without address", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("joinDate", newStore.joinDate)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without longitude", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("latitude", newStore.latitude)
+      .field("joinDate", newStore.joinDate)
+      .field("address", newStore.address)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without latitude", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("joinDate", newStore.joinDate)
+      .field("address", newStore.address)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without ownerName", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("joinDate", newStore.joinDate)
+      .field("address", newStore.address)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without mobilePhone", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("joinDate", newStore.joinDate)
+      .field("address", newStore.address)
+      .field("ownerName", newStore.ownerName)
+      .field("status", newStore.status)
+      .attach("photo", imageBuffer, "nama_baru.png");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed create store without photo", async () => {
+    const newStore = {
+      name: "Toko Plastik Test Failed",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+      joinDate: "2024-01-16T11:18:53.205+00:00",
+      ownerName: "Sehat",
+      mobilePhone: "083333333333",
+      status: "verified",
+    };
+    const response = await request(app)
+      .post("/stores")
+      .field("name", newStore.name)
+      .field("longitude", newStore.longitude)
+      .field("latitude", newStore.latitude)
+      .field("joinDate", newStore.joinDate)
+      .field("address", newStore.address)
+      .field("ownerName", newStore.ownerName)
+      .field("mobilePhone", newStore.mobilePhone)
+      .field("status", newStore.status);
+
+    expect(response.status).toBe(400);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });

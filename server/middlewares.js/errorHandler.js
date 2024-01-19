@@ -76,6 +76,34 @@ function errorHandler(error, req, res, next) {
       statusCode = 404;
       message = error.name;
       break;
+    case "Photo is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store name is already registered":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store name is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store address is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store longitude & latitude is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store owner's name is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Store mobile phone is required":
+      statusCode = 400;
+      message = error.name;
+      break;
     case "BSONError":
       statusCode = 404;
       message = error.message;
