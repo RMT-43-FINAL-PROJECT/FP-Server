@@ -132,6 +132,93 @@ None
 }
 ```
 
+### POST /stores
+
+Create new stores
+
+#### Request Header
+
+None
+
+#### Request Body
+
+```json
+{
+  "name": "Toko Sehat", <unique>
+  "longitude":112.63070356923028,
+  "latitude": -7.986860420618447,
+  "address": "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+  "joinDate": "2024-01-16T11:18:53.205+00:00", <default new Date()>
+  "ownerName": "Sehat",
+  "mobilePhone": "083333333333",
+  "status ": "verified" <default 'unverified'>
+}
+```
+
+#### Request File
+
+```json
+{
+  "photo": <upload>
+}
+```
+
+#### Response (200)
+
+```json
+{
+  "message": "Create Store With ID 65aa3386b11c806f2a3e0900 Successfull"
+}
+```
+
+#### Response (400- Bad Request - !Name)
+
+```json
+{
+  "message": "Store name is required"
+}
+```
+
+#### Response (400- Bad Request - non unique Name)
+
+```json
+{
+  "message": "Store name is already registered"
+}
+```
+
+#### Response (400- Bad Request - !longitude || !latitude)
+
+```json
+{
+  "message": "Store longitude & latitude is required"
+}
+```
+
+#### Response (400- Bad Request - !address)
+
+```json
+{
+  "message": "Store address is required"
+}
+```
+
+#### Response (400- Bad Request - !ownerName)
+
+```json
+{
+  "message": "Store owner's name is required"
+}
+```
+
+#### Response (400- Bad Request - !mobilePhone)
+
+```json
+{
+  "message": "Store mobile phone is required"
+}
+```
+
 ## GLOBAL ERROR
 
 ### Response (500 - Internal Server Error)
