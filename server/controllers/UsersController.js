@@ -145,7 +145,7 @@ class UsersController {
 
   static async getUserWhoIsLogin(req, res, next) {
     try {
-      if(!req.user){
+      if (!req.user) {
         throw { name: 'No user found' }
       }
       let findUser = await db.collection("users").findOne(
@@ -153,6 +153,40 @@ class UsersController {
         { projection: { password: 0 } }
       )
       return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async updateUser(req, res, next) {
+    try {
+      if (!req.user) {
+        throw { name: 'No user found' }
+      }
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(req.user._id) },
+        { projection: { password: 0 } }
+      )
+      return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async deleteUser(req, res, next) {
+    try {
+      let { idUser } = req.params
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(idUser) },
+        { projection: { password: 0 } }
+      )
+      if (!findUser) {
+        throw { name: 'No user found with this ID' }
+      }
+      await db.collection("users").deleteOne({ _id: new ObjectId(idUser) })
+      return res.status(200).json({ message: `${findUser.name} has been deleted` })
     } catch (error) {
       console.log(error)
       next(error)
