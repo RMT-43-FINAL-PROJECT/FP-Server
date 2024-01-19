@@ -137,6 +137,22 @@ class UsersController {
       next(error)
     }
   }
+
+  static async getUserWhoIsLogin(req, res, next) {
+    try {
+      if(!req.user){
+        throw { name: 'No user found' }
+      }
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(req.user._id) },
+        { projection: { password: 0 } }
+      )
+      return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
 }
 
 module.exports = UsersController
