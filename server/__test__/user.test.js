@@ -486,6 +486,14 @@ describe('GET /users', () => {
         expect(response.body).toBeInstanceOf(Array)
     })
 
+    test('SUCCESS : FIND USER WITH QUERY NAME', async () => {
+        const response = await request(app)
+            .get(`/users?name=neymar`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Array)
+    })
+
     test('FAILED : FIND ALL SALES/ADMIN - wrong query role', async () => {
         const response = await request(app)
             .get(`/users?role=user`)

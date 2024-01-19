@@ -7,14 +7,19 @@ const { ObjectId } = require('mongodb')
 class UsersController {
   static async getAllUser(req, res, next) {
     try {
-      let { role } = req.query
+      let { role, name } = req.query
       let query = {}
       if (role) {
         if (role !== 'sales' && role !== "admin") {
           throw { name: "Role is invalid" }
         }
-        query = { role: role }
+        query.role = role
       }
+
+      if (name) {
+        query.name = { $regex: new RegExp(name, 'i') }
+      }
+
       const data = await db.collection("users").find(query, {
         projection: { password: 0 }
       }).toArray()
