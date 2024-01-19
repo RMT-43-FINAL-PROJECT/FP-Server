@@ -13,6 +13,7 @@ router.post(`/login`, UsersController.login)
 router.use(authentication)
 
 router.get(`/`, authorizationRoleAdmin, UsersController.getAllUser)
+router.get(`/userprofile`, UsersController.getUserWhoIsLogin) // sales can see their profile
 router.put(`/:idUser`, upload.fields([
     { name: 'name', maxCount: 1 },
     { name: 'email', maxCount: 1 },
