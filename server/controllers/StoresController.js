@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { db } = require("../configs/mongodb");
 
 class StoresController {
@@ -31,15 +32,32 @@ class StoresController {
       next(error);
     }
   }
-  static async template(req, res, next) {
+  static async getDetailById(req, res, next) {
     try {
-      const data = `template`;
+      const { id } = req.params;
+      const _id = new ObjectId(id);
+      const data = await db.collection("stores").findOne({ _id });
+
+      if (!data) {
+        throw { name: `No store found with this ID` };
+      }
+
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
+
+  // static async template(req, res, next) {
+  //   try {
+  //     const data = `template`;
+  //     res.status(200).json(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //     next(error);
+  //   }
+  // }
 }
 
 module.exports = StoresController;
