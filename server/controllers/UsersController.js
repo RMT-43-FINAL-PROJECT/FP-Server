@@ -171,11 +171,10 @@ class UsersController {
         throw { name: 'No user found with this ID' }
       }
       let { name, email, mobilePhone, address } = req.body
-      let { photo } = req.files
+      let { photo } = req.files || {}
       if (name === undefined ||
         email === undefined ||
         mobilePhone === undefined ||
-        address === undefined ||
         address === undefined
       ) {
         throw { name: 'Missing required fields' }
@@ -186,24 +185,27 @@ class UsersController {
         throw { name: "This email has already been registered" }
       }
 
-      let bufferString = photo[0].buffer.toString('base64')
-      let dataToUpload = `data:${photo[0].mimetype};base64,${bufferString}`
-      let sendFile = await cloudinary.uploader.upload(dataToUpload, {
-        public_id: `${findUser.name}-${findUser._id}`,
-        folder: 'users',
-        resource_type: 'auto'
-      })
+      if (photo) {
+        let bufferString = photo[0].buffer.toString('base64')
+        let dataToUpload = `data:${photo[0].mimetype};base64,${bufferString}`
+        let sendFile = await cloudinary.uploader.upload(dataToUpload, {
+          public_id: `${findUser.name}-photo`,
+          folder: 'users',
+          resource_type: 'auto'
+        })
+        findUser.photo = sendFile.secure_url
+      }
       await db.collection("users").updateOne(
         { _id: new ObjectId(idUser) },
         {
-          $set: { name, email, mobilePhone, address, photo: sendFile.secure_url },
+          $set: { name, email, mobilePhone, address, photo: findUser.photo },
         }
       )
       return res.status(200).json({
         message: 'Update Successfully',
         _id: new ObjectId(idUser),
         name,
-        photo: sendFile.secure_url,
+        photo: findUser.photo,
         email,
         mobilePhone,
         address,
