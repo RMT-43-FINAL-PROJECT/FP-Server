@@ -173,7 +173,7 @@ afterAll(async () => {
   }
 });
 
-describe.only("GET /stores", () => {
+describe("GET /stores", () => {
   test("Success should return list of stores include orders", async () => {
     const response = await request(app).get("/stores");
 
@@ -223,5 +223,47 @@ describe.only("GET /stores", () => {
       "price",
       expect.any(Number)
     );
+  });
+});
+
+describe("GET /stores/:id", () => {
+  test("Success should return details of a stores", async () => {
+    const response = await request(app).get(`/stores/${idStore1}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("_id", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
+    expect(response.body).toHaveProperty("location", expect.any(Object));
+    expect(response.body.location).toBeInstanceOf(Object);
+    expect(response.body.location).toHaveProperty("type", expect.any(String));
+    expect(response.body.location).toHaveProperty(
+      "coordinates",
+      expect.any(Array)
+    );
+    expect(response.body).toHaveProperty("photo", expect.any(String));
+    expect(response.body).toHaveProperty("joinDate", expect.any(String));
+    expect(response.body).toHaveProperty("address", expect.any(String));
+    expect(response.body).toHaveProperty("ownerName", expect.any(String));
+    expect(response.body).toHaveProperty("mobilePhone", expect.any(String));
+    expect(response.body).toHaveProperty("status", expect.any(String));
+    expect(response.body).toHaveProperty("createdAt", expect.any(String));
+    expect(response.body).toHaveProperty("updatedAt", expect.any(String));
+  });
+  test("Failed with wrong ID should return message", async () => {
+    const falseId = `65a6661db4fe8ae80cec2a19`;
+    const response = await request(app).get(`/stores/${falseId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed with wrong ID format should return message", async () => {
+    const falseId = `65a6661db4fe8ae80cec2a1`;
+    const response = await request(app).get(`/stores/${falseId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
