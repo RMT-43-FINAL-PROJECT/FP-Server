@@ -104,6 +104,10 @@ function errorHandler(error, req, res, next) {
       statusCode = 400;
       message = error.name;
       break;
+    case 'No user found':
+      statusCode = 404;
+      message = error.name;
+      break;
     case "BSONError":
       statusCode = 404;
       message = error.message;

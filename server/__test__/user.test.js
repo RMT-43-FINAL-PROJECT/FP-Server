@@ -26,6 +26,11 @@ beforeAll(async () => {
         updatedAt: "2024-01-17T13:27:58.398Z",
     })
     idUser1 = seedingAdmin.insertedId
+    let findUserAdmin = await testDb.collection('users').findOne(
+        { _id: new ObjectId(idUser1) },
+        { projection: { password: 0 } }
+    )
+    access_token_admin = signToken(findUserAdmin)
 
     let seedingSales = await testDb.collection('users').insertOne({
         name: `Sales`,
@@ -40,11 +45,10 @@ beforeAll(async () => {
         updatedAt: "2024-01-17T13:27:58.398Z",
     })
     idUser2 = seedingSales.insertedId
-
-    let findSales = await testDb.collection("users").findOne({
-        _id: new ObjectId(idUser2)
-    })
-
+    let findSales = await testDb.collection("users").findOne(
+        { _id: new ObjectId(idUser2) },
+        { projection: { password: 0 } }
+    )
     access_token_sales = signToken(findSales)
 })
 
@@ -258,7 +262,6 @@ describe('GET /users/login', () => {
         const response = await request(app)
             .post('/users/login')
             .send(dataBody)
-        access_token_admin = response.body.access_token
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Object)
         expect(response.body).toHaveProperty('access_token', expect.any(String))
@@ -461,34 +464,74 @@ describe('GET /users/:idUser', () => {
 describe('GET /users', () => {
     test('SUCCESS : FIND ALL USERS', async () => {
         const response = await request(app)
-        .get(`/users`)
-        .set('Authorization', `Bearer ${access_token_admin}`)
+            .get(`/users`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Array)
     })
 
     test('SUCCESS : FIND ALL ADMIN', async () => {
         const response = await request(app)
-        .get(`/users?role=admin`)
-        .set('Authorization', `Bearer ${access_token_admin}`)
+            .get(`/users?role=admin`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Array)
     })
 
     test('SUCCESS : FIND ALL SALES', async () => {
         const response = await request(app)
-        .get(`/users?role=sales`)
-        .set('Authorization', `Bearer ${access_token_admin}`)
+            .get(`/users?role=sales`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Array)
+    })
+
+    test('SUCCESS : FIND USER WITH QUERY NAME', async () => {
+        const response = await request(app)
+            .get(`/users?name=neymar`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
         expect(response.status).toBe(200)
         expect(response.body).toBeInstanceOf(Array)
     })
 
     test('FAILED : FIND ALL SALES/ADMIN - wrong query role', async () => {
         const response = await request(app)
-        .get(`/users?role=user`)
-        .set('Authorization', `Bearer ${access_token_admin}`)
+            .get(`/users?role=user`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
         expect(response.status).toBe(400)
         expect(response.body).toBeInstanceOf(Object)
         expect(response.body).toHaveProperty("message", "Role is invalid")
+    })
+})
+
+describe('GET /userprofile', () => {
+    test('SUCCESS : GET PROFILE USERS', async () => {
+        const response = await request(app)
+            .get(`/users/userprofile`)
+            .set('Authorization', `Bearer ${access_token_admin}`)
+        expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toMatchObject({
+            _id: expect.any(String),
+            name: "Admin",
+            photo: expect.any(String),
+            joinDate: expect.any(String),
+            email: `admin@gmail.com`,
+            mobilePhone: `081927380033`,
+            address: `Indonesia`,
+            role: "admin",
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String)
+        })
+    })
+
+    test('FAILED : GET PROFILE USERS - not found', async () => {
+        const response = await request(app)
+            .get(`/users/userprofile`)
+            .set('Authorization', `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWE3YTAzODc5NDhjNGJiMzE1M2E4YjAiLCJlbWFpbCI6InJvbmFsZG9AZ21haWwuY29tIiwicm9sZSI6InNhbGVzIiwiaWF0IjoxNzA1NjU5NDc1fQ.MZ-PYbuwvXeeGO-m5XpFz0ykp6V2DdrsgOEuJuJswzk`)
+        expect(response.status).toBe(404)
+        expect(response.body).toBeInstanceOf(Object)
+        expect(response.body).toHaveProperty("message", 'No user found')
+
     })
 })

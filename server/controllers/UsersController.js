@@ -7,14 +7,19 @@ const { ObjectId } = require('mongodb')
 class UsersController {
   static async getAllUser(req, res, next) {
     try {
-      let { role } = req.query
+      let { role, name } = req.query
       let query = {}
       if (role) {
         if (role !== 'sales' && role !== "admin") {
           throw { name: "Role is invalid" }
         }
-        query = { role: role }
+        query.role = role
       }
+
+      if (name) {
+        query.name = { $regex: new RegExp(name, 'i') }
+      }
+
       const data = await db.collection("users").find(query, {
         projection: { password: 0 }
       }).toArray()
@@ -131,6 +136,22 @@ class UsersController {
       if (!findUser) {
         throw { name: 'No user found with this ID' }
       }
+      return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async getUserWhoIsLogin(req, res, next) {
+    try {
+      if(!req.user){
+        throw { name: 'No user found' }
+      }
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(req.user._id) },
+        { projection: { password: 0 } }
+      )
       return res.status(200).json(findUser)
     } catch (error) {
       console.log(error)

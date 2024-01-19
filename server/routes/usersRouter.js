@@ -10,6 +10,7 @@ router.post(`/login`, UsersController.login)
 router.use(authentication)
 
 router.get(`/`, authorizationRoleAdmin, UsersController.getAllUser)
+router.get(`/userprofile`, UsersController.getUserWhoIsLogin)
 router.get(`/finduser-email`, authorizationRoleAdmin, UsersController.getUserByEmail)
 router.get(`/finduser/:idUser`, authorizationRoleAdmin, UsersController.getUserByIdParams)
 
