@@ -109,7 +109,7 @@ function errorHandler(error, req, res, next) {
       message = error.name;
       break;
     case "BSONError":
-      statusCode = 404;
+      statusCode = 400;
       message = error.message;
       break;
   }

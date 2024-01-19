@@ -267,7 +267,7 @@ describe("GET /stores/:id", () => {
     const falseId = `65a6661db4fe8ae80cec2a1`;
     const response = await request(app).get(`/stores/${falseId}`);
 
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });

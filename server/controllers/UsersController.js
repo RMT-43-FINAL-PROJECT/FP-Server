@@ -1,8 +1,9 @@
 const { db } = require("../configs/mongodb")
 const { hashPassword, comparePassword } = require("../helpers/bcryptjs")
 const { signToken } = require("../helpers/jwt")
-const { validateRegister, validateEmail } = require("../helpers/validator")
+const { validateRegister, validateEmail, validateInputUpdate } = require("../helpers/validator")
 const { ObjectId } = require('mongodb')
+const cloudinary = require("../configs/cloudinary");
 
 class UsersController {
   static async getAllUser(req, res, next) {
@@ -145,7 +146,7 @@ class UsersController {
 
   static async getUserWhoIsLogin(req, res, next) {
     try {
-      if(!req.user){
+      if (!req.user) {
         throw { name: 'No user found' }
       }
       let findUser = await db.collection("users").findOne(
@@ -153,6 +154,80 @@ class UsersController {
         { projection: { password: 0 } }
       )
       return res.status(200).json(findUser)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async updateUser(req, res, next) {
+    try {
+      let { idUser } = req.params
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(idUser) },
+        { projection: { password: 0 } }
+      )
+      if (!findUser) {
+        throw { name: 'No user found with this ID' }
+      }
+      let { name, email, mobilePhone, address } = req.body
+      let { photo } = req.files || {}
+      if (name === undefined ||
+        email === undefined ||
+        mobilePhone === undefined ||
+        address === undefined
+      ) {
+        throw { name: 'Missing required fields' }
+      }
+      validateInputUpdate({ name, email, mobilePhone, address })
+      let checkUnique = await UsersController.checkEmailOnDb(email)
+      if (email !== findUser.email && checkUnique) {
+        throw { name: "This email has already been registered" }
+      }
+
+      if (photo) {
+        let bufferString = photo[0].buffer.toString('base64')
+        let dataToUpload = `data:${photo[0].mimetype};base64,${bufferString}`
+        let sendFile = await cloudinary.uploader.upload(dataToUpload, {
+          public_id: `${findUser.name}-photo`,
+          folder: 'users',
+          resource_type: 'auto'
+        })
+        findUser.photo = sendFile.secure_url
+      }
+      await db.collection("users").updateOne(
+        { _id: new ObjectId(idUser) },
+        {
+          $set: { name, email, mobilePhone, address, photo: findUser.photo },
+        }
+      )
+      return res.status(200).json({
+        message: 'Update Successfully',
+        _id: new ObjectId(idUser),
+        name,
+        photo: findUser.photo,
+        email,
+        mobilePhone,
+        address,
+      })
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async deleteUser(req, res, next) {
+    try {
+      let { idUser } = req.params
+      let findUser = await db.collection("users").findOne(
+        { _id: new ObjectId(idUser) },
+        { projection: { password: 0 } }
+      )
+      if (!findUser) {
+        throw { name: 'No user found with this ID' }
+      }
+      await db.collection("users").deleteOne({ _id: new ObjectId(idUser) })
+      return res.status(200).json({ message: `${findUser.name} has been deleted` })
     } catch (error) {
       console.log(error)
       next(error)
