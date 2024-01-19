@@ -1,8 +1,9 @@
 const { db } = require("../configs/mongodb")
 const { hashPassword, comparePassword } = require("../helpers/bcryptjs")
 const { signToken } = require("../helpers/jwt")
-const { validateRegister, validateEmail } = require("../helpers/validator")
+const { validateRegister, validateEmail, validateInputUpdate } = require("../helpers/validator")
 const { ObjectId } = require('mongodb')
+const cloudinary = require("../configs/cloudinary");
 
 class UsersController {
   static async getAllUser(req, res, next) {
@@ -161,14 +162,52 @@ class UsersController {
 
   static async updateUser(req, res, next) {
     try {
-      if (!req.user) {
-        throw { name: 'No user found' }
-      }
+      let { idUser } = req.params
       let findUser = await db.collection("users").findOne(
-        { _id: new ObjectId(req.user._id) },
+        { _id: new ObjectId(idUser) },
         { projection: { password: 0 } }
       )
-      return res.status(200).json(findUser)
+      if (!findUser) {
+        throw { name: 'No user found with this ID' }
+      }
+      let { name, email, mobilePhone, address } = req.body
+      let { photo } = req.files
+      if (name === undefined ||
+        email === undefined ||
+        mobilePhone === undefined ||
+        address === undefined ||
+        address === undefined
+      ) {
+        throw { name: 'Missing required fields' }
+      }
+      validateInputUpdate({ name, email, mobilePhone, address })
+      let checkUnique = await UsersController.checkEmailOnDb(email)
+      if (email !== findUser.email && checkUnique) {
+        throw { name: "This email has already been registered" }
+      }
+
+      let bufferString = photo[0].buffer.toString('base64')
+      let dataToUpload = `data:${photo[0].mimetype};base64,${bufferString}`
+      let sendFile = await cloudinary.uploader.upload(dataToUpload, {
+        public_id: `${findUser.name}-${findUser._id}`,
+        folder: 'users',
+        resource_type: 'auto'
+      })
+      await db.collection("users").updateOne(
+        { _id: new ObjectId(idUser) },
+        {
+          $set: { name, email, mobilePhone, address, photo: sendFile.secure_url },
+        }
+      )
+      return res.status(200).json({
+        message: 'Update Successfully',
+        _id: new ObjectId(idUser),
+        name,
+        photo: sendFile.secure_url,
+        email,
+        mobilePhone,
+        address,
+      })
     } catch (error) {
       console.log(error)
       next(error)
