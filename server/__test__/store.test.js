@@ -155,7 +155,7 @@ beforeAll(async () => {
         price: 117000,
       },
     ],
-    status: "pending",
+    status: "confirmed",
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -189,43 +189,8 @@ describe("GET /stores", () => {
     expect(response.body[0]).toHaveProperty("name", expect.any(String));
     expect(response.body[0]).toHaveProperty("photo", expect.any(String));
     expect(response.body[0]).toHaveProperty("joinDate", expect.any(String));
-    expect(response.body[0]).toHaveProperty("orders", expect.any(Array));
-    expect(response.body[0].orders).toBeInstanceOf(Array);
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "storeId",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "userId",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "productOrder",
-      expect.any(Array)
-    );
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "status",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "createdAt",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0]).toHaveProperty(
-      "updatedAt",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0].productOrder).toBeInstanceOf(Array);
-    expect(response.body[0].orders[0].productOrder[0]).toHaveProperty(
-      "productId",
-      expect.any(String)
-    );
-    expect(response.body[0].orders[0].productOrder[0]).toHaveProperty(
-      "qtySold",
-      expect.any(Number)
-    );
-    expect(response.body[0].orders[0].productOrder[0]).toHaveProperty(
-      "price",
+    expect(response.body[0]).toHaveProperty(
+      "confirmedOrderValue",
       expect.any(Number)
     );
   });

@@ -27,6 +27,22 @@ class StoresController {
           },
         ])
         .toArray();
+      data.map((el) => {
+        el.confirmedOrderValue = 0;
+        if (el.orders.length > 0) {
+          el.orders.map((or) => {
+            if (or.status === `confirmed`) {
+              or.productOrder.map((po) => {
+                el.confirmedOrderValue += po.qtySold * po.price;
+              });
+            }
+          });
+        }
+        delete el.orders;
+      });
+      data.sort(function (a, b) {
+        return b.confirmedOrderValue - a.confirmedOrderValue;
+      });
       res.status(200).json(data);
     } catch (error) {
       // console.log(error);
