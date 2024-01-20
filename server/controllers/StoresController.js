@@ -133,6 +133,15 @@ class StoresController {
       next(error);
     }
   }
+  static async getCount(req, res, next) {
+    try {
+      const data = await db.collection("stores").count();
+      res.status(200).json({ count: data });
+    } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
