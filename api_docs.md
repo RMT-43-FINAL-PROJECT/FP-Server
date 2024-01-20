@@ -127,6 +127,52 @@ None
 ]
 ```
 
+### GET /stores/mobile
+
+Get all simplified data from stores collection with ability to search name ?search=<string>
+
+#### Request Header
+
+None
+
+#### Request Query
+
+```json
+{ "search": <storeName> }
+```
+
+#### Response (200)
+
+```json
+[
+  {
+    "_id": "65ab45b85e90712f7a164390",
+    "name": "Toko Haji Abdullah",
+    "photo": "https://res.cloudinary.com/do3tjux3f/image/upload/v1705723320/FP-Stores/Toko%20Haji%20Abdullah.jpg.jpg",
+    "address": "Pasar Rawasari, Jl. Rawasari Barat No.1, RT.2/RW.1, Kampung Rawa, Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10510",
+    "ownerName": "Pak Abdullah",
+    "mobilePhone": "+6281234567815",
+    "status": "verified"
+  },
+  {
+    "_id": "65ab45db5e90712f7a164391",
+    "name": "Toko Khomaini",
+    "photo": "https://res.cloudinary.com/do3tjux3f/image/upload/v1705723355/FP-Stores/Toko%20Khomaini.jpg.jpg",
+    "address": "Pasar Slipi. Jl. Anggrek Garuda D/I, RT.4/RW.2, Kemanggisan, Kec. Palmerah, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11480",
+    "ownerName": "Khomaini Atun",
+    "mobilePhone": "+6281233220988",
+    "status": "verified"
+  },
+...,
+]
+```
+
+#### Response (200 - unmatch name search with any store in DV)
+
+```json
+[]
+```
+
 ### GET /stores/count
 
 Get total number of stores from DB

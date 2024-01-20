@@ -261,6 +261,44 @@ describe("GET /stores/simple", () => {
   });
 });
 
+describe("GET /stores/mobile", () => {
+  test("Success should return simple data list of stores without search params", async () => {
+    const response = await request(app).get("/stores/mobile");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toBeInstanceOf(Object);
+    expect(response.body[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("photo", expect.any(String));
+    expect(response.body[0]).toHaveProperty("address", expect.any(String));
+    expect(response.body[0]).toHaveProperty("ownerName", expect.any(String));
+    expect(response.body[0]).toHaveProperty("mobilePhone", expect.any(String));
+    expect(response.body[0]).toHaveProperty("status", expect.any(String));
+  });
+  test("Success should return simple data list of stores with search params", async () => {
+    const response = await request(app).get("/stores/mobile?search=to");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toBeInstanceOf(Object);
+    expect(response.body[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("photo", expect.any(String));
+    expect(response.body[0]).toHaveProperty("address", expect.any(String));
+    expect(response.body[0]).toHaveProperty("ownerName", expect.any(String));
+    expect(response.body[0]).toHaveProperty("mobilePhone", expect.any(String));
+    expect(response.body[0]).toHaveProperty("status", expect.any(String));
+  });
+  test("Success should return empty array if search doesn't match any store in DB", async () => {
+    const response = await request(app).get("/stores/mobile?search=0");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body).toHaveLength(0);
+  });
+});
+
 describe("GET /stores/count", () => {
   test("Success should return total stores in DB", async () => {
     const response = await request(app).get("/stores/count");
