@@ -24,6 +24,5 @@ router.put(`/:idUser`, upload.fields([
 router.delete(`/:idUser`, authorizationRoleAdmin, UsersController.deleteUser)
 router.get(`/finduser-email`, authorizationRoleAdmin, UsersController.getUserByEmail)
 router.get(`/finduser/:idUser`, authorizationRoleAdmin, UsersController.getUserByIdParams)
-router.get(`/finduser/:idUser`, authorizationRoleAdmin, UsersController.getUserByIdParams)
 
 module.exports = router
