@@ -231,7 +231,37 @@ describe("GET /stores", () => {
   });
 });
 
-describe("GET /stores", () => {
+describe("GET /stores/simple", () => {
+  test("Success should return simple data list of stores", async () => {
+    const response = await request(app).get("/stores/simple");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toBeInstanceOf(Object);
+    expect(response.body[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("location", expect.any(Object));
+    expect(response.body[0]).toHaveProperty("address", expect.any(String));
+    expect(response.body[0].location).toBeInstanceOf(Object);
+    expect(response.body[0].location).toHaveProperty(
+      "type",
+      expect.any(String)
+    );
+    expect(response.body[0].location).toHaveProperty(
+      "coordinates",
+      expect.any(Array)
+    );
+    expect(response.body[0].location.coordinates).toBeInstanceOf(Array);
+    expect(response.body[0].location.coordinates[0]).toStrictEqual(
+      expect.any(Number)
+    );
+    expect(response.body[0].location.coordinates[1]).toStrictEqual(
+      expect.any(Number)
+    );
+  });
+});
+
+describe("GET /stores/count", () => {
   test("Success should return total stores in DB", async () => {
     const response = await request(app).get("/stores/count");
     expect(response.status).toBe(200);

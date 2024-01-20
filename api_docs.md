@@ -83,6 +83,50 @@ None
 ]
 ```
 
+### GET /stores/simple
+
+Get all simplified data from stores collection
+
+#### Request Header
+
+None
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+[
+  {
+    "_id": "65ab45b85e90712f7a164390",
+    "name": "Toko Haji Abdullah",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        106.87160371358618,
+        -6.185072644706806
+      ]
+    },
+    "address": "Pasar Rawasari, Jl. Rawasari Barat No.1, RT.2/RW.1, Kampung Rawa, Kec. Cemp. Putih, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10510"
+  },
+  {
+    "_id": "65ab45db5e90712f7a164391",
+    "name": "Toko Khomaini",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        106.79593648070963,
+        -6.190223033710549
+      ]
+    },
+    "address": "Pasar Slipi. Jl. Anggrek Garuda D/I, RT.4/RW.2, Kemanggisan, Kec. Palmerah, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11480"
+  },
+...,
+]
+```
+
 ### GET /stores/count
 
 Get total number of stores from DB
