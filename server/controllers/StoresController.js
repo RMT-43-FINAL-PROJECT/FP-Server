@@ -168,6 +168,46 @@ class StoresController {
       next(error);
     }
   }
+  static async getMobileList(req, res, next) {
+    const { search } = req.query;
+
+    try {
+      const data = await db
+        .collection("stores")
+        .aggregate([
+          {
+            $match: {
+              name: {
+                $regex: search ? search : "",
+                $options: "i",
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              photo: 1,
+              address: 1,
+              ownerName: 1,
+              mobilePhone: 1,
+              status: 1,
+            },
+          },
+          {
+            $sort: {
+              name: 1,
+            },
+          },
+        ])
+        .toArray();
+
+      res.status(200).json(data);
+    } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
