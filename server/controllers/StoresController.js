@@ -240,6 +240,72 @@ class StoresController {
         .status(200)
         .json({ message: `Delete Store With ID ${store._id} Successfull` });
     } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
+  static async editById(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const _id = new ObjectId(id);
+      const store = await db.collection("stores").findOne(_id);
+      if (!store) {
+        throw { name: `No store found with this ID` };
+      }
+
+      let {
+        name,
+        address,
+        longitude,
+        latitude,
+        ownerName,
+        mobilePhone,
+        status,
+      } = req.body;
+
+      if (!name) {
+        throw { name: "Store name is required" };
+      }
+
+      if (!address) {
+        throw { name: "Store address is required" };
+      }
+
+      if (!longitude || !latitude) {
+        throw { name: "Store longitude & latitude is required" };
+      }
+      if (!ownerName) {
+        throw { name: "Store owner's name is required" };
+      }
+      if (!mobilePhone) {
+        throw { name: "Store mobile phone is required" };
+      }
+
+      const storeName = await db.collection("stores").findOne({ name: name });
+
+      if (store.name !== name && storeName) {
+        throw { name: "Store name is already registered" };
+      }
+
+      const input = {
+        name,
+        location: {
+          type: "Point",
+          coordinates: [Number(longitude), Number(latitude)],
+        },
+        address,
+        ownerName,
+        mobilePhone,
+        status,
+      };
+
+      await db.collection("stores").updateOne({ _id }, { $set: input });
+
+      res
+        .status(200)
+        .json({ message: `Update Store With ID ${_id} Successfull` });
+    } catch (error) {
       console.log(error);
       next(error);
     }

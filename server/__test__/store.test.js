@@ -630,6 +630,201 @@ describe("POST /stores", () => {
   });
 });
 
+describe("PUT /stores/:id", () => {
+  test("Success edit store should return message with id", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without header token should return message", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without admin token should return message", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without name", async () => {
+    const newData = {
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without unique name", async () => {
+    const newData = {
+      name: "Toko Sumber Rezeki Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without address", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without longitude", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without latitude", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without ownerName", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      mobilePhone: "082222222222",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store without mobilePhone", async () => {
+    const newData = {
+      name: "Toko Plastik Morodadi Test",
+      longitude: 112.63070356923028,
+      latitude: -7.986860420618447,
+      address:
+        "Jl. Sutan Syahrir No.43, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65117",
+      ownerName: "Bambang",
+      status: "verified",
+    };
+    const response = await request(app)
+      .put(`/stores/${idStore1}`)
+      .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
 describe("DELETE /stores/:id", () => {
   test("Success should return message", async () => {
     const response = await request(app)

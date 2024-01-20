@@ -15,5 +15,6 @@ router.get(`/mobile`, StoresController.getMobileList);
 router.get(`/:id`, StoresController.getDetailById);
 router.use(authentication);
 router.delete(`/:id`, authorizationRoleAdmin, StoresController.deleteById);
+router.put(`/:id`, authorizationRoleAdmin, StoresController.editById);
 
 module.exports = router;
