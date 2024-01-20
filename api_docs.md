@@ -83,6 +83,26 @@ None
 ]
 ```
 
+### GET /stores/count
+
+Get total number of stores from DB
+
+#### Request Header
+
+None
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+{
+  "count": 12
+}
+```
+
 ### GET /stores/:id
 
 Get detailed data from a stores

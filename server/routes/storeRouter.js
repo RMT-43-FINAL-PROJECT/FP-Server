@@ -7,6 +7,7 @@ const upload = multer({ storage: storage });
 
 router.get(`/`, StoresController.getAll);
 router.post(`/`, upload.single(`photo`), StoresController.addStore);
+router.get(`/count`, StoresController.getCount);
 router.get(`/:id`, StoresController.getDetailById);
 
 module.exports = router;

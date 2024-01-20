@@ -231,6 +231,15 @@ describe("GET /stores", () => {
   });
 });
 
+describe("GET /stores", () => {
+  test("Success should return total stores in DB", async () => {
+    const response = await request(app).get("/stores/count");
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("count", expect.any(Number));
+  });
+});
+
 describe("GET /stores/:id", () => {
   test("Success should return details of a stores", async () => {
     const response = await request(app).get(`/stores/${idStore1}`);
