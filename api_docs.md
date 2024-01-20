@@ -443,6 +443,66 @@ Edit stores
 }
 ```
 
+### PATCH /stores/:id
+
+Edit stores photo
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token"
+}
+```
+
+#### Request File
+
+```json
+{
+  "photo": <upload>
+}
+```
+
+#### Response (200)
+
+```json
+{
+  "message": "Update Store Photo With ID 65aba1c8d9ef109cc4e04015 Successfull"
+}
+```
+
+#### Response (400- Bad Request - !photo)
+
+```json
+{
+  "message": "Photo is required"
+}
+```
+
+#### Response (404- Not Found)
+
+```json
+{
+  "message": "No store found with this ID"
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (403- Forbidden)
+
+```json
+{
+  "message": "Forbidden Access. Admin only"
+}
+```
+
 ## GLOBAL ERROR
 
 ### Response (500 - Internal Server Error)

@@ -9,6 +9,8 @@ const fs = require("fs");
 const { signToken } = require("../helpers/jwt");
 const filePath = path.resolve(__dirname, "./asset/TokoSehat.jpg");
 const imageBuffer = fs.readFileSync(filePath); // Buffer
+const filePath2 = path.resolve(__dirname, "./asset/patchtest.jpg");
+const imageBuffer2 = fs.readFileSync(filePath2); // Buffer
 
 let idStore1;
 let idStore2;
@@ -817,6 +819,58 @@ describe("PUT /stores/:id", () => {
     const response = await request(app)
       .put(`/stores/${idStore1}`)
       .send(newData)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
+describe("PATCH /stores/:id", () => {
+  test("Success edit store photo should return message with id", async () => {
+    const response = await request(app)
+      .patch(`/stores/${idStore1}`)
+      .attach("photo", imageBuffer2, "nama_baru2.png")
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed with wrong store ID should return message", async () => {
+    const wrongId = `65aba1c8d9ef109cc4e04015`;
+    const response = await request(app)
+      .patch(`/stores/${wrongId}`)
+      .attach("photo", imageBuffer2, "nama_baru2.png")
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without header token should return message", async () => {
+    const response = await request(app)
+      .patch(`/stores/${idStore1}`)
+      .attach("photo", imageBuffer2, "nama_baru2.png");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without admin token should return message", async () => {
+    const response = await request(app)
+      .patch(`/stores/${idStore1}`)
+      .attach("photo", imageBuffer2, "nama_baru2.png")
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed edit store photo without photo upload", async () => {
+    const response = await request(app)
+      .patch(`/stores/${idStore1}`)
       .set("Authorization", `Bearer ${access_token_admin}`);
 
     expect(response.status).toBe(400);
