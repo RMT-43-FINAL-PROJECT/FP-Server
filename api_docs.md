@@ -234,7 +234,7 @@ None
 }
 ```
 
-#### Response (401- Not Found)
+#### Response (401- Unauthorized)
 
 ```json
 {
@@ -334,6 +334,112 @@ None
 ```json
 {
   "message": "Store mobile phone is required"
+}
+```
+
+### PUT /stores/:id
+
+Edit stores
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token"
+}
+```
+
+#### Request Body
+
+```json
+{
+  "name": "Toko Sehat", <unique>
+  "longitude":112.63070356923028,
+  "latitude": -7.986860420618447,
+  "address": "Jl. Pasar Besar No.153, Sukoharjo, Kec. Klojen, Kota Malang, Jawa Timur 65118",
+  "ownerName": "Sehat",
+  "mobilePhone": "083333333333",
+  "status ": "verified"
+}
+```
+
+#### Response (200)
+
+```json
+{
+  "message": "Update Store With ID 65aa3386b11c806f2a3e0900 Successfull"
+}
+```
+
+#### Response (400- Bad Request - !Name)
+
+```json
+{
+  "message": "Store name is required"
+}
+```
+
+#### Response (400- Bad Request - non unique Name)
+
+```json
+{
+  "message": "Store name is already registered"
+}
+```
+
+#### Response (400- Bad Request - !longitude || !latitude)
+
+```json
+{
+  "message": "Store longitude & latitude is required"
+}
+```
+
+#### Response (400- Bad Request - !address)
+
+```json
+{
+  "message": "Store address is required"
+}
+```
+
+#### Response (400- Bad Request - !ownerName)
+
+```json
+{
+  "message": "Store owner's name is required"
+}
+```
+
+#### Response (400- Bad Request - !mobilePhone)
+
+```json
+{
+  "message": "Store mobile phone is required"
+}
+```
+
+#### Response (404- Not Found)
+
+```json
+{
+  "message": "No store found with this ID"
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (403- Forbidden)
+
+```json
+{
+  "message": "Forbidden Access. Admin only"
 }
 ```
 
