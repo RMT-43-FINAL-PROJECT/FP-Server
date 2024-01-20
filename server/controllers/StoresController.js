@@ -306,7 +306,41 @@ class StoresController {
         .status(200)
         .json({ message: `Update Store With ID ${_id} Successfull` });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      next(error);
+    }
+  }
+  static async patchImageById(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const _id = new ObjectId(id);
+      const store = await db.collection("stores").findOne(_id);
+      if (!store) {
+        throw { name: `No store found with this ID` };
+      }
+
+      if (!req.file) {
+        throw { name: "Photo is required" };
+      }
+
+      const dataToUpload = `data:${
+        req.file.mimetype
+      };base64,${req.file.buffer.toString("base64")}`;
+      const uploadFile = await cloudinary.uploader.upload(dataToUpload, {
+        public_id: req.file.originalname,
+        folder: "FP-Stores",
+        resource_type: "auto",
+      });
+
+      const photo = uploadFile.secure_url;
+
+      await db.collection("stores").updateOne({ _id }, { $set: { photo } });
+      res
+        .status(200)
+        .json({ message: `Update Store Photo With ID ${_id} Successfull` });
+    } catch (error) {
+      // console.log(error);
       next(error);
     }
   }
