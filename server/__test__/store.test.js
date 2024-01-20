@@ -6,6 +6,7 @@ const { hashPassword } = require("../helpers/bcryptjs");
 
 const path = require("path");
 const fs = require("fs");
+const { signToken } = require("../helpers/jwt");
 const filePath = path.resolve(__dirname, "./asset/TokoSehat.jpg");
 const imageBuffer = fs.readFileSync(filePath); // Buffer
 
@@ -17,6 +18,8 @@ let idUser1;
 let idUser2;
 let idOrder1;
 let idOrder2;
+let access_token_admin;
+let access_token_sales;
 
 beforeAll(async () => {
   await client.connect();
@@ -120,10 +123,21 @@ beforeAll(async () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+
   let seedUsers1 = await testDb.collection("users").insertOne(inputU1);
   idUser1 = seedUsers1.insertedId;
   let seedUsers2 = await testDb.collection("users").insertOne(inputU2);
   idUser2 = seedUsers2.insertedId;
+
+  let findUserAdmin = await testDb
+    .collection("users")
+    .findOne({ _id: new ObjectId(idUser1) }, { projection: { password: 0 } });
+  access_token_admin = signToken(findUserAdmin);
+
+  let findUserSales = await testDb
+    .collection("users")
+    .findOne({ _id: new ObjectId(idUser2) }, { projection: { password: 0 } });
+  access_token_sales = signToken(findUserSales);
 
   //seeding orders
   const inputO1 = {
@@ -398,7 +412,6 @@ describe("POST /stores", () => {
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
-
   test("Failed create store without name", async () => {
     const newStore = {
       name: "Toko Sehat Test",
@@ -426,7 +439,6 @@ describe("POST /stores", () => {
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
-
   test("Failed create store without unique name", async () => {
     const newStore = {
       name: "Toko Plastik Morodadi Test",
@@ -613,6 +625,45 @@ describe("POST /stores", () => {
       .field("status", newStore.status);
 
     expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
+describe("DELETE /stores/:id", () => {
+  test("Success should return message", async () => {
+    const response = await request(app)
+      .delete(`/stores/${idStore1}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Failed without authorization should return message", async () => {
+    const response = await request(app).delete(`/stores/${idStore1}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without admin authorization should return message", async () => {
+    const response = await request(app)
+      .delete(`/stores/${idStore1}`)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if using wrong Store Id should return message", async () => {
+    const wrongId = `65aba1c8d9ef109cc4e04015`;
+    const response = await request(app)
+      .delete(`/stores/${wrongId}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(404);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });

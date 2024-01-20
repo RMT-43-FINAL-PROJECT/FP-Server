@@ -202,6 +202,54 @@ None
 }
 ```
 
+### DELETE /stores/:id
+
+DELETE data from a stores
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token"
+}
+```
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+{
+  "message": "Delete Store With ID 65aba1c8d9ef109cc4e04015 Successfull"
+}
+```
+
+#### Response (404- Not Found)
+
+```json
+{
+  "message": "No store found with this ID"
+}
+```
+
+#### Response (401- Not Found)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (403- Forbidden)
+
+```json
+{
+  "message": "Forbidden Access. Admin only"
+}
+```
+
 ### POST /stores
 
 Create new stores

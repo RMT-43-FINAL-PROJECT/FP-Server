@@ -224,6 +224,26 @@ class StoresController {
       next(error);
     }
   }
+  static async deleteById(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const _id = new ObjectId(id);
+      const store = await db.collection("stores").findOne(_id);
+      if (!store) {
+        throw { name: `No store found with this ID` };
+      }
+
+      await db.collection("stores").deleteOne({ _id });
+
+      res
+        .status(200)
+        .json({ message: `Delete Store With ID ${store._id} Successfull` });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
