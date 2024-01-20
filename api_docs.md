@@ -4,7 +4,7 @@
 
 ### GET /stores
 
-Get all data from stores collection and include orders from the store
+Get all data from stores collection and total confirmed order value
 
 #### Request Header
 
@@ -23,61 +23,21 @@ None
     "name": "Toko Plastik Morodadi",
     "photo": "https://lh3.googleusercontent.com/p/AF1QipOE83L2OliXcZV7nczQvFhooFJc7qxtLGb7kYCT=s1360-w1360-h1020",
     "joinDate": "2024-01-16T11:18:53.205Z",
-    "orders": [
-      {
-        "_id": "65a666b4ef33f639c273f75f",
-        "storeId": "65a6661db4fe8ae80cec2a19",
-        "userId": "65a665d80d9bf3239adde346",
-        "productOrder": [
-          {
-            "productId": "65a665f572a4ab2c12b8d151",
-            "qtySold": 20,
-            "price": 117000
-          }
-        ],
-        "status": "pending",
-        "createdAt": "2024-01-16T11:21:24.667Z",
-        "updatedAt": "2024-01-16T11:21:24.667Z"
-      }
-    ]
-  },{
-    "_id": "65a6661db4fe8ae80cec2a19",
-    "name": "Toko Plastik Morodadi",
-    "photo": "https://lh3.googleusercontent.com/p/AF1QipOE83L2OliXcZV7nczQvFhooFJc7qxtLGb7kYCT=s1360-w1360-h1020",
+    "confirmedOrderValue": 3510000
+  },
+  {
+    "_id": "65aa29a837de349042882c2f",
+    "name": "Toko Sehat",
+    "photo": "https://res.cloudinary.com/do3tjux3f/image/upload/v1705650397/FP-Stores/Toko%20Sehat.jpg.jpg",
     "joinDate": "2024-01-16T11:18:53.205Z",
-    "orders": [
-      {
-        "_id": "65a666b4ef33f639c273f75f",
-        "storeId": "65a6661db4fe8ae80cec2a19",
-        "userId": "65a665d80d9bf3239adde346",
-        "productOrder": [
-          {
-            "productId": "65a665f572a4ab2c12b8d151",
-            "qtySold": 20,
-            "price": 117000
-          }
-        ],
-        "status": "pending",
-        "createdAt": "2024-01-16T11:21:24.667Z",
-        "updatedAt": "2024-01-16T11:21:24.667Z"
-      },
-      {
-        "_id": "65a666b4ef33f639c273f75f",
-        "storeId": "65a6661db4fe8ae80cec2a19",
-        "userId": "65a665d80d9bf3239adde346",
-        "productOrder": [
-          {
-            "productId": "65a665f572a4ab2c12b8d151",
-            "qtySold": 20,
-            "price": 117000
-          }
-        ],
-        "status": "pending",
-        "createdAt": "2024-01-16T11:21:24.667Z",
-        "updatedAt": "2024-01-16T11:21:24.667Z"
-      },
-      ...
-    ]
+    "confirmedOrderValue": 3510000
+  },
+  {
+    "_id": "65ab448f5e90712f7a164389",
+    "name": "Toko Pasar Kue Subuh Senen",
+    "photo": "https://res.cloudinary.com/do3tjux3f/image/upload/v1705723023/FP-Stores/Toko%20Pasar%20Kue%20Subuh%20Senen.jpg.jpg",
+    "joinDate": "2024-01-20T03:57:00.025Z",
+    "confirmedOrderValue": 0
   },
   ...,
 ]
