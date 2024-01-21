@@ -410,3 +410,112 @@ describe("GET /orders/:id", () => {
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
+
+describe("POST /orders", () => {
+  test("Success should return message", async () => {
+    const newInput = {
+      storeId: idStore1,
+      productOrder: [
+        {
+          productId: idProduct1,
+          qtySold: 7,
+          price: 117000,
+        },
+        {
+          productId: idProduct1,
+          qtySold: 5,
+          price: 32000,
+        },
+      ],
+    };
+    const response = await request(app)
+      .post(`/orders`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without storeId should return message", async () => {
+    const newInput = {
+      productOrder: [
+        {
+          productId: idProduct1,
+          qtySold: 7,
+          price: 117000,
+        },
+        {
+          productId: idProduct1,
+          qtySold: 5,
+          price: 32000,
+        },
+      ],
+    };
+    const response = await request(app)
+      .post(`/orders`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without productOrder should return message", async () => {
+    const newInput = {
+      storeId: idStore1,
+      productOrder: [],
+    };
+    const response = await request(app)
+      .post(`/orders`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if productOrder is not Array should return message", async () => {
+    const newInput = {
+      storeId: idStore1,
+      productOrder: {
+        productId: idProduct1,
+        qtySold: 5,
+        price: 32000,
+      },
+    };
+    const response = await request(app)
+      .post(`/orders`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if store not registered should return message", async () => {
+    const newInput = {
+      storeId: "65a6661db4fe8ae80cec2a19",
+      productOrder: {
+        productId: idProduct1,
+        qtySold: 5,
+        price: 32000,
+      },
+    };
+    const response = await request(app)
+      .post(`/orders`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Token", async () => {
+    const response = await request(app).post(`/orders`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
