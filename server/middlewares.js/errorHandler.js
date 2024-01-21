@@ -116,6 +116,10 @@ function errorHandler(error, req, res, next) {
             statusCode = 400;
             message = error.name;
             break;
+        case "You are not yet at the location":
+            statusCode = 400;
+            message = error.name;
+            break;
         case "Store address is required":
             statusCode = 400;
             message = error.name;
