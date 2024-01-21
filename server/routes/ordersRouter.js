@@ -7,5 +7,6 @@ const router = require("express").Router();
 router.use(authentication);
 
 router.get(`/`, authorizationRoleAdmin, OrdersController.getAll);
+router.get(`/:id`, OrdersController.getDetail);
 
 module.exports = router;

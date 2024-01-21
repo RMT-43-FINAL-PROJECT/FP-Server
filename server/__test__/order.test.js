@@ -11,10 +11,12 @@ let idProduct1;
 let idProduct2;
 let idUser1;
 let idUser2;
+let idUser3;
 let idOrder1;
 let idOrder2;
 let access_token_admin;
 let access_token_sales;
+let access_token_chika;
 
 beforeAll(async () => {
   await client.connect();
@@ -118,11 +120,26 @@ beforeAll(async () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+  const inputU3 = {
+    name: `Chika`,
+    photo:
+      "https://static.vecteezy.com/system/resources/previews/026/434/409/non_2x/default-avatar-profile-icon-social-media-user-photo-vector.jpg",
+    joinDate: new Date(),
+    email: `chika@gmail.com`,
+    password: hashPassword(`12345`),
+    mobilePhone: `082222222222`,
+    address: `Indonesia`,
+    role: "sales",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
   let seedUsers1 = await testDb.collection("users").insertOne(inputU1);
   idUser1 = seedUsers1.insertedId;
   let seedUsers2 = await testDb.collection("users").insertOne(inputU2);
   idUser2 = seedUsers2.insertedId;
+  let seedUsers3 = await testDb.collection("users").insertOne(inputU3);
+  idUser3 = seedUsers3.insertedId;
 
   let findUserAdmin = await testDb
     .collection("users")
@@ -133,6 +150,11 @@ beforeAll(async () => {
     .collection("users")
     .findOne({ _id: new ObjectId(idUser2) }, { projection: { password: 0 } });
   access_token_sales = signToken(findUserSales);
+
+  let findUserChika = await testDb
+    .collection("users")
+    .findOne({ _id: new ObjectId(idUser3) }, { projection: { password: 0 } });
+  access_token_chika = signToken(findUserChika);
 
   //seeding orders
   const inputO1 = {
@@ -253,6 +275,137 @@ describe("GET /orders", () => {
       .set("Authorization", `Bearer ${access_token_sales}`);
 
     expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
+describe("GET /orders/:id", () => {
+  test("Success using admin token should return data orders with totalBill", async () => {
+    const response = await request(app)
+      .get(`/orders/${idOrder1}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("_id", expect.any(String));
+    expect(response.body).toHaveProperty("status", expect.any(String));
+    expect(response.body).toHaveProperty("createdAt", expect.any(String));
+    expect(response.body).toHaveProperty("updatedAt", expect.any(String));
+    expect(response.body).toHaveProperty("store", expect.any(Object));
+    expect(response.body.store).toBeInstanceOf(Object);
+    expect(response.body.store).toHaveProperty("_id", expect.any(String));
+    expect(response.body.store).toHaveProperty("name", expect.any(String));
+    expect(response.body).toHaveProperty("user", expect.any(Object));
+    expect(response.body.user).toBeInstanceOf(Object);
+    expect(response.body.user).toHaveProperty("_id", expect.any(String));
+    expect(response.body.user).toHaveProperty("name", expect.any(String));
+    expect(response.body).toHaveProperty("productOrder", expect.any(Array));
+    expect(response.body.productOrder[0]).toBeInstanceOf(Object);
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "productId",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "qtySold",
+      expect.any(Number)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "price",
+      expect.any(Number)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "name",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "image",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "category",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "billPerItem",
+      expect.any(Number)
+    );
+    expect(response.body).toHaveProperty("totalBill", expect.any(Number));
+  });
+  test("Success should author token return data orders with totalBill", async () => {
+    const response = await request(app)
+      .get(`/orders/${idOrder1}`)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("_id", expect.any(String));
+    expect(response.body).toHaveProperty("status", expect.any(String));
+    expect(response.body).toHaveProperty("createdAt", expect.any(String));
+    expect(response.body).toHaveProperty("updatedAt", expect.any(String));
+    expect(response.body).toHaveProperty("store", expect.any(Object));
+    expect(response.body.store).toBeInstanceOf(Object);
+    expect(response.body.store).toHaveProperty("_id", expect.any(String));
+    expect(response.body.store).toHaveProperty("name", expect.any(String));
+    expect(response.body).toHaveProperty("user", expect.any(Object));
+    expect(response.body.user).toBeInstanceOf(Object);
+    expect(response.body.user).toHaveProperty("_id", expect.any(String));
+    expect(response.body.user).toHaveProperty("name", expect.any(String));
+    expect(response.body).toHaveProperty("productOrder", expect.any(Array));
+    expect(response.body.productOrder[0]).toBeInstanceOf(Object);
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "productId",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "qtySold",
+      expect.any(Number)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "price",
+      expect.any(Number)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "name",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "image",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "category",
+      expect.any(String)
+    );
+    expect(response.body.productOrder[0]).toHaveProperty(
+      "billPerItem",
+      expect.any(Number)
+    );
+    expect(response.body).toHaveProperty("totalBill", expect.any(Number));
+  });
+  test("Failed without  Token", async () => {
+    const response = await request(app).get(`/orders/${idOrder1}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Author / Admin Token", async () => {
+    const response = await request(app)
+      .get(`/orders/${idOrder1}`)
+      .set("Authorization", `Bearer ${access_token_chika}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed with wrong order Id", async () => {
+    const wrongId = "65ab5e24d0ccb45b1e2f3f85";
+    const response = await request(app)
+      .get(`/orders/${wrongId}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(404);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });

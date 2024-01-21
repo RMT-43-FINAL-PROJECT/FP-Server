@@ -1,5 +1,5 @@
 function errorHandler(error, req, res, next) {
-  console.log(error);
+  //   console.log(error);
   let statusCode = 500;
   let message = `Internal Server Error`;
 
@@ -60,6 +60,10 @@ function errorHandler(error, req, res, next) {
       statusCode = 403;
       message = error.name;
       break;
+    case "Forbidden Access. Admin && related Sales only":
+      statusCode = 403;
+      message = error.name;
+      break;
     case "No user found with this email":
       statusCode = 404;
       message = error.name;
@@ -105,6 +109,10 @@ function errorHandler(error, req, res, next) {
       message = error.name;
       break;
     case "No user found":
+      statusCode = 404;
+      message = error.name;
+      break;
+    case "No order found with this ID":
       statusCode = 404;
       message = error.name;
       break;
