@@ -218,6 +218,88 @@ None
 }
 ```
 
+### POST /orders
+
+Create Orders
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token || Author Token"
+}
+```
+
+#### Request Body
+
+//field ID harus string atau benar- benar ObjectId(`65a6661db4fe8ae80cec2a19`), jangan string "ObjectId(`65a6661db4fe8ae80cec2a19`)"
+
+```json
+{
+  "storeId": "65a6661db4fe8ae80cec2a19",
+  "productOrder": [
+    {
+      "productId": "65a7ee0845ca2a04fba0a035",
+      "qtySold": 7,
+      "price": 23000
+    },
+    {
+      "productId": "65a7ee0845ca2a04fba0a036",
+      "qtySold": 5,
+      "price": 13000
+    }
+  ]
+}
+```
+
+#### Response (201)
+
+```json
+{
+  "message": "Create Orders With ID 65acccf2d069db871ebdfbda Successful"
+}
+```
+
+#### Response (400- Bad Request - !storeId)
+
+```json
+{
+  "message": "Store id is required"
+}
+```
+
+#### Response (400- Bad Request - !productOrder)
+
+```json
+{
+  "message": "Product order is required"
+}
+```
+
+#### Response (400- Bad Request - productOrder is not Array)
+
+```json
+{
+  "message": "Product order must be an Array"
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (404- Not Found - unregistered Store)
+
+```json
+{
+  "message": "No store found with this ID"
+}
+```
+
 ## GLOBAL ERROR
 
 ### Response (500 - Internal Server Error)

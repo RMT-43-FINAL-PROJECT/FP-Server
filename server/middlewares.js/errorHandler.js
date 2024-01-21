@@ -116,6 +116,18 @@ function errorHandler(error, req, res, next) {
       statusCode = 404;
       message = error.name;
       break;
+    case "Store id is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Product order is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Product order must be an Array":
+      statusCode = 400;
+      message = error.name;
+      break;
     case "BSONError":
       statusCode = 400;
       message = error.message;

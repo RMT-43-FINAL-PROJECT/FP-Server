@@ -272,6 +272,55 @@ class OrdersController {
       next(error);
     }
   }
+  static async addOrders(req, res, next) {
+    try {
+      const { _id } = req.user;
+      let { storeId, productOrder } = req.body;
+
+      if (!storeId) {
+        throw { name: `Store id is required` };
+      }
+
+      const validStoreId = new ObjectId(storeId);
+      const theStore = await db.collection("stores").findOne(validStoreId);
+
+      if (!theStore) {
+        throw { name: `No store found with this ID` };
+      }
+
+      const theSales = await db.collection("users").findOne(_id);
+
+      if (productOrder.length === 0) {
+        throw { name: `Product order is required` };
+      }
+      if (!Array.isArray(productOrder)) {
+        throw { name: `Product order must be an Array` };
+      }
+
+      const productInput = productOrder.map((el) => {
+        el.productId = new ObjectId(el.productId);
+        return el;
+      });
+
+      const input = {
+        storeId: theStore._id,
+        userId: theSales._id,
+        productOrder: productInput,
+        status: "pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const data = await db.collection("orders").insertOne(input);
+      const orderId = data.insertedId;
+      res
+        .status(201)
+        .json({ message: `Create Orders With ID ${orderId} Successful` });
+    } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
