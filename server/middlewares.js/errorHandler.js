@@ -1,5 +1,5 @@
 function errorHandler(error, req, res, next) {
-  //   console.log(error);
+  console.log(error);
   let statusCode = 500;
   let message = `Internal Server Error`;
 
