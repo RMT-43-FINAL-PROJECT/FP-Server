@@ -10,6 +10,7 @@ router.get(`/`, authorizationRoleAdmin, SchedulesController.getAllschedules);
 router.post(`/`, authorizationRoleAdmin, SchedulesController.createSchedules);
 router.get(`/myschedule`, SchedulesController.getScheduleUserLogin);
 router.get(`/:scheduleId`, SchedulesController.getScheduleById); // admin and sales
-router.delete(`/:scheduleId`, authorizationRoleAdmin, SchedulesController.deleteSchedule); // admin and sales
+router.delete(`/:scheduleId`, authorizationRoleAdmin, SchedulesController.deleteSchedule); 
+router.put(`/:scheduleId`, authorizationRoleAdmin, SchedulesController.updateSchedule); 
 
 module.exports = router;

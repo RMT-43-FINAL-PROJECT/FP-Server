@@ -244,6 +244,48 @@ class SchedulesController {
     }
   }
 
+  static async updateSchedule(req, res, next) {
+    try {
+      let { scheduleId } = req.params
+      let checkingSchedule = await SchedulesController.findSchedule(scheduleId)
+      if (!checkingSchedule) {
+        throw { name: 'No schedule found with this ID' }
+      }
+      let { storeId, userId, time, isCompleted } = req.body
+      if (!storeId) {
+        throw { name: "Store ID is required" }
+      }
+      if (!userId) {
+        throw { name: "User/Sales ID is required" }
+      }
+      if (!time) {
+        throw { name: "Schedule time is required" }
+      }
+      if (isCompleted === undefined) {
+        throw { name: "isCompleted is required" }
+      }
+      if (typeof isCompleted !== 'boolean') {
+        throw { name: "isCompleted must be boolean (true/false)" }
+      }
+      let rawDataToUpdate = {
+        storeId: new ObjectId(storeId),
+        userId: new ObjectId(userId),
+        time: new Date(time),
+        isCompleted
+      }
+      await db.collection("schedules").updateOne(
+        { _id: new ObjectId(scheduleId) },
+        {
+          $set: rawDataToUpdate,
+        }
+      )
+      res.status(200).json(rawDataToUpdate)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`
