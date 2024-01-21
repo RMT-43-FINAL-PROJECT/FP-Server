@@ -271,7 +271,8 @@ class SchedulesController {
         storeId: new ObjectId(storeId),
         userId: new ObjectId(userId),
         time: new Date(time),
-        isCompleted
+        isCompleted,
+        updatedAt: new Date()
       }
       await db.collection("schedules").updateOne(
         { _id: new ObjectId(scheduleId) },
@@ -280,6 +281,36 @@ class SchedulesController {
         }
       )
       res.status(200).json(rawDataToUpdate)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async updateStatusSchedule(req, res, next) {
+    try {
+      let { scheduleId } = req.params
+      let checkingSchedule = await SchedulesController.findSchedule(scheduleId)
+      if (!checkingSchedule) {
+        throw { name: 'No schedule found with this ID' }
+      }
+      let { isCompleted } = req.body
+      if (isCompleted === undefined) {
+        throw { name: "isCompleted is required" }
+      }
+      if (typeof isCompleted !== 'boolean') {
+        throw { name: "isCompleted must be boolean (true/false)" }
+      }
+      await db.collection("schedules").updateOne(
+        { _id: new ObjectId(scheduleId) },
+        {
+          $set: {
+            isCompleted: isCompleted,
+            updatedAt: new Date()
+          },
+        }
+      )
+      res.status(200).json({ message: `Status from schedule with ID ${scheduleId} has been updated` })
     } catch (error) {
       console.log(error)
       next(error)
