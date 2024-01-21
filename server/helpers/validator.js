@@ -80,6 +80,10 @@ function validateProducts({ name, category, stock, price, discQty, discPercent, 
 }
 
 function validateInputUpdate({ name, email, mobilePhone, address }) {
+    let isNameNotEmpty = validator.isEmpty(name)
+    if (isNameNotEmpty) {
+        throw { name: 'Name is required' }
+    }
     let isEmailNotEmpty = validator.isEmpty(email)
     if (isEmailNotEmpty) {
         throw { name: 'Email is required' }
