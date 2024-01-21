@@ -46,11 +46,13 @@ function validateEmail(email) {
     }
 }
 
+
 function validateProducts({ name, category, stock, price, discQty, discPercent, isAvailable }) {
     let isNameNotEmpty = validator.isEmpty(name)
     if (isNameNotEmpty) {
         throw { name: 'Name is required' }
     }
+
     let isCategoryNotEmpty = validator.isEmpty(category)
     if (isCategoryNotEmpty) {
         throw { name: 'Category is required' }
@@ -74,11 +76,39 @@ function validateProducts({ name, category, stock, price, discQty, discPercent, 
     let isAvailableNotEmpty = validator.isEmpty(isAvailable)
     if (isAvailableNotEmpty) {
         throw { name: 'IsAvailable is required' }
+}
+  
+function validateInputUpdate({ name, email, mobilePhone, address }) {          
+    let isEmailNotEmpty = validator.isEmpty(email)
+    if (isEmailNotEmpty) {
+        throw { name: 'Email is required' }
+    }
+    let isMobilePhoneNotEmpty = validator.isEmpty(mobilePhone)
+    if (isMobilePhoneNotEmpty) {
+        throw { name: 'Mobile Phone is required' }
+    }
+    let isAddressNotEmpty = validator.isEmpty(address)
+    if (isAddressNotEmpty) {
+        throw { name: 'Address is required' }
+    }
+    let checkLengthName = validator.isLength(name, { min: 4 })
+    if (!checkLengthName) {
+        throw { name: 'Name must be at least 4 characters' }
+    }
+    let isEmail = validator.isEmail(email)
+    if (!isEmail) {
+        throw { name: 'Email is invalid' }
+    }
+    let isValidMobilePhone = validator.isMobilePhone(mobilePhone, ['id-ID'])
+    if (!isValidMobilePhone) {
+        throw { name: 'Mobile Phone is invalid' }
     }
 }
 
 module.exports = {
     validateRegister,
     validateEmail,
-    validateProducts
+    validateProducts,
+    validateInputUpdate,
+
 }
