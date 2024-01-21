@@ -108,6 +108,22 @@ function errorHandler(error, req, res, next) {
       statusCode = 400;
       message = error.name;
       break;
+    case "Store ID is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "User/Sales ID is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Schedule time is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "Schedule already exists":
+      statusCode = 400;
+      message = error.name;
+      break;
     case "No user found":
       statusCode = 404;
       message = error.name;
