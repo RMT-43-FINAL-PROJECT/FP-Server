@@ -108,6 +108,14 @@ function errorHandler(error, req, res, next) {
       statusCode = 400;
       message = error.name;
       break;
+    case "isCompleted is required":
+      statusCode = 400;
+      message = error.name;
+      break;
+    case "isCompleted must be boolean (true/false)":
+      statusCode = 400;
+      message = error.name;
+      break;
     case "Store ID is required":
       statusCode = 400;
       message = error.name;
