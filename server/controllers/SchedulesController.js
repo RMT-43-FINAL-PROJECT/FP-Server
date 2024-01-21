@@ -294,18 +294,34 @@ class SchedulesController {
       if (!checkingSchedule) {
         throw { name: 'No schedule found with this ID' }
       }
-      let { isCompleted } = req.body
-      if (isCompleted === undefined) {
-        throw { name: "isCompleted is required" }
+      let checkStore = await SchedulesController.findStore(checkingSchedule.storeId)
+      if (!checkStore) {
+        throw { name: 'No store found with this ID' }
       }
-      if (typeof isCompleted !== 'boolean') {
-        throw { name: "isCompleted must be boolean (true/false)" }
+      let { latitude, longitude } = req.body  // from expo
+      let coordinateUser = [Number(longitude), Number(latitude)]
+      let query = {
+        name: checkStore.name,
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: coordinateUser,
+            },
+            // $minDistance: 1000, //INI UNTUK MENCARI DILUAR JARAK KOORDINAT
+            $maxDistance: 100, //INI UNTUK MENCARI YANG TERDEKAT DARI YANG KITA PUNYA DI DATABASE
+          },
+        },
+      }
+      let nearStore = await db.collection('stores').find(query).toArray()
+      if(nearStore.length !== 1){
+        throw { name: 'You are not yet at the location'}
       }
       await db.collection("schedules").updateOne(
         { _id: new ObjectId(scheduleId) },
         {
           $set: {
-            isCompleted: isCompleted,
+            isCompleted: true,
             updatedAt: new Date()
           },
         }

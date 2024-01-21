@@ -12,6 +12,6 @@ router.get(`/myschedule`, SchedulesController.getScheduleUserLogin);
 router.get(`/:scheduleId`, SchedulesController.getScheduleById); // admin and sales
 router.delete(`/:scheduleId`, authorizationRoleAdmin, SchedulesController.deleteSchedule); 
 router.put(`/:scheduleId`, authorizationRoleAdmin, SchedulesController.updateSchedule); 
-router.patch(`/status/:scheduleId`, SchedulesController.updateStatusSchedule); // admin and sales
+router.put(`/status/:scheduleId`, SchedulesController.updateStatusSchedule); // admin and sales
 
 module.exports = router;
