@@ -1,7 +1,8 @@
 const { ObjectId } = require("mongodb");
 const { db } = require("../configs/mongodb");
 const cloudinary = require('cloudinary').v2;
-const { randomUUID } = require(`crypto`)
+const { randomUUID } = require(`crypto`);
+const { validateProducts } = require("../helpers/validator");
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY_CLOUDINARY,
@@ -15,8 +16,8 @@ class ProductsController {
         const data = await db.collection("products").aggregate([
           {
             '$match': {
-              'isAvailable': true 
-            } 
+              'isAvailable': true
+            }
           }
         ]).toArray();
         res.status(200).json(data);
@@ -48,6 +49,7 @@ class ProductsController {
         { public_id: `${req.file.originalname}_${randomUUID()}`, folder: `products/image` });
 
       const { name, category, stock, price, discQty, discPercent, isAvailable } = req.body
+      validateProducts({ name, category, stock, price, discQty, discPercent, isAvailable })
       const data = await db.collection("products").insertOne({ name, image: dataImage.secure_url, category, stock, price, discQty, discPercent, isAvailable, createdAt: new Date(), updatedAt: new Date() });
       res.status(201).json({ message: `Create Product With ID ${data.insertedId} Successfull` });
     } catch (error) {
@@ -68,6 +70,7 @@ class ProductsController {
         throw { name: `Product Not Found` }
       }
       const { name, category, stock, price, discQty, discPercent, isAvailable } = req.body
+      validateProducts({ name, category, stock, price, discQty, discPercent, isAvailable })
       await db.collection("products").updateOne(
         { "_id": new ObjectId(req.params.id) },
         { $set: { name, image: dataImage.secure_url, category, stock, price, discQty, discPercent, isAvailable } });

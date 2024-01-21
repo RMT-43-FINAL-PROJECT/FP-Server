@@ -46,11 +46,39 @@ function validateEmail(email) {
     }
 }
 
-function validateInputUpdate({ name, email, mobilePhone, address }) {
+
+function validateProducts({ name, category, stock, price, discQty, discPercent, isAvailable }) {
     let isNameNotEmpty = validator.isEmpty(name)
     if (isNameNotEmpty) {
         throw { name: 'Name is required' }
     }
+
+    let isCategoryNotEmpty = validator.isEmpty(category)
+    if (isCategoryNotEmpty) {
+        throw { name: 'Category is required' }
+    }
+    let isStockNotEmpty = validator.isEmpty(stock)
+    if (isStockNotEmpty) {
+        throw { name: 'Stock is required' }
+    }
+    let isPriceNotEmpty = validator.isEmpty(price)
+    if (isPriceNotEmpty) {
+        throw { name: 'Price is required' }
+    }
+    let isDiscQtyNotEmpty = validator.isEmpty(discQty)
+    if (isDiscQtyNotEmpty) {
+        throw { name: 'DiscQty is required' }
+    }
+    let isDiscPercentNotEmpty = validator.isEmpty(discPercent)
+    if (isDiscPercentNotEmpty) {
+        throw { name: 'DiscPercent is required' }
+    }
+    let isAvailableNotEmpty = validator.isEmpty(isAvailable)
+    if (isAvailableNotEmpty) {
+        throw { name: 'IsAvailable is required' }
+}
+  
+function validateInputUpdate({ name, email, mobilePhone, address }) {          
     let isEmailNotEmpty = validator.isEmpty(email)
     if (isEmailNotEmpty) {
         throw { name: 'Email is required' }
@@ -80,5 +108,7 @@ function validateInputUpdate({ name, email, mobilePhone, address }) {
 module.exports = {
     validateRegister,
     validateEmail,
+    validateProducts,
     validateInputUpdate,
+
 }
