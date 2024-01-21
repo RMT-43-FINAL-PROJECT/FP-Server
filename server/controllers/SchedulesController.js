@@ -4,8 +4,45 @@ const { ObjectId } = require('mongodb')
 class SchedulesController {
   static async getAllschedules(req, res, next) {
     try {
-      const data = await db.collection("schedules").find().toArray()
-      res.status(200).json(data)
+      const agg = [
+        {
+          '$lookup': {
+            'from': 'stores',
+            'localField': 'storeId',
+            'foreignField': '_id',
+            'as': 'storeInformations'
+          }
+        }, {
+          '$lookup': {
+            'from': 'users',
+            'localField': 'userId',
+            'foreignField': '_id',
+            'as': 'userInformations'
+          }
+        }, {
+          '$unwind': {
+            'path': '$storeInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$unwind': {
+            'path': '$userInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$sort': {
+            'time': 1
+          }
+        }, {
+          '$project': {
+            "userInformations.password": 0,
+            "storeId": 0,
+            "userId": 0,
+          }
+        }
+      ]
+      let allSchedules = await db.collection("schedules").aggregate(agg).toArray()
+      res.status(200).json(allSchedules)
     } catch (error) {
       console.log(error)
       next(error)
@@ -35,6 +72,14 @@ class SchedulesController {
     return existingSchedule
   }
 
+  static async checkStoreVerify(storeId, userId, time) {
+    let findStore = await SchedulesController.findStore(storeId)
+    if (findStore.status === "unverified") {
+      return false
+    }
+    return true
+  }
+
   static async createSchedules(req, res, next) {
     try {
       let { storeId, userId, time } = req.body
@@ -50,6 +95,10 @@ class SchedulesController {
       let storeExist = await SchedulesController.findStore(storeId)
       if (!storeExist) {
         throw { name: 'No store found with this ID' }
+      }
+      let isStoreVerified = await SchedulesController.checkStoreVerify(storeId)
+      if (!isStoreVerified) {
+        throw { name: 'Store with that ID has not been verified' }
       }
       let userExist = await SchedulesController.findUser(userId)
       if (!userExist) {
