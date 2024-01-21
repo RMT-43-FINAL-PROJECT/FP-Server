@@ -733,3 +733,93 @@ describe("DELETE /orders", () => {
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
+
+describe("GET /orders/user", () => {
+  test("Success should return list of orders of a User with count and confirmedValue", async () => {
+    const response = await request(app)
+      .get("/orders/user")
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("count", expect.any(Number));
+    expect(response.body).toHaveProperty("confirmedValue", expect.any(Number));
+    expect(response.body).toHaveProperty("data", expect.any(Array));
+    expect(response.body.data).toBeInstanceOf(Array);
+    expect(response.body.data[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body.data[0]).toHaveProperty("status", expect.any(String));
+    expect(response.body.data[0]).toHaveProperty(
+      "createdAt",
+      expect.any(String)
+    );
+    expect(response.body.data[0]).toHaveProperty(
+      "updatedAt",
+      expect.any(String)
+    );
+    expect(response.body.data[0]).toHaveProperty("store", expect.any(Object));
+    expect(response.body.data[0].store).toBeInstanceOf(Object);
+    expect(response.body.data[0].store).toHaveProperty(
+      "_id",
+      expect.any(String)
+    );
+    expect(response.body.data[0].store).toHaveProperty(
+      "name",
+      expect.any(String)
+    );
+    expect(response.body.data[0]).toHaveProperty("user", expect.any(Object));
+    expect(response.body.data[0].user).toBeInstanceOf(Object);
+    expect(response.body.data[0].user).toHaveProperty(
+      "_id",
+      expect.any(String)
+    );
+    expect(response.body.data[0].user).toHaveProperty(
+      "name",
+      expect.any(String)
+    );
+    expect(response.body.data[0]).toHaveProperty(
+      "productOrder",
+      expect.any(Array)
+    );
+    expect(response.body.data[0].productOrder[0]).toBeInstanceOf(Object);
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "productId",
+      expect.any(String)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "qtySold",
+      expect.any(Number)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "price",
+      expect.any(Number)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "name",
+      expect.any(String)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "image",
+      expect.any(String)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "category",
+      expect.any(String)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "billPerItem",
+      expect.any(Number)
+    );
+    expect(response.body.data[0]).toHaveProperty(
+      "totalBill",
+      expect.any(Number)
+    );
+  });
+
+  test("Failed without  Token", async () => {
+    const response = await request(app).get("/orders/user");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
