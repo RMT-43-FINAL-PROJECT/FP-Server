@@ -34,6 +34,9 @@ class ProductsController {
   static async getDetailProduct(req, res, next) {
     try {
       const data = await db.collection("products").findOne({ _id: new ObjectId(req.params.id) });
+      if (!data) {
+        throw { name: `Product Not Found` }
+      }
       res.status(200).json(data);
     } catch (error) {
       console.log(error);
