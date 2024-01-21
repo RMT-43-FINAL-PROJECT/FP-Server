@@ -175,6 +175,53 @@ class SchedulesController {
     }
   }
 
+  static async getScheduleUserLogin(req, res, next) {
+    try {
+      const agg = [
+        {
+          '$match': {
+            'userId': new ObjectId(req.user._id)
+          }
+        }, {
+          '$lookup': {
+            'from': 'stores',
+            'localField': 'storeId',
+            'foreignField': '_id',
+            'as': 'storeInformations'
+          }
+        }, {
+          '$lookup': {
+            'from': 'users',
+            'localField': 'userId',
+            'foreignField': '_id',
+            'as': 'userInformations'
+          }
+        }, {
+          '$unwind': {
+            'path': '$storeInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$unwind': {
+            'path': '$userInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            'storeId': 0,
+            'userId': 0,
+            'userInformations.password': 0
+          }
+        }
+      ]
+      let getMySchedule = await db.collection("schedules").aggregate(agg).toArray()
+      res.status(200).json(getMySchedule)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`

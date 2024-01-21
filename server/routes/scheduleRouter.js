@@ -8,6 +8,7 @@ router.use(authentication)
 
 router.get(`/`, authorizationRoleAdmin, SchedulesController.getAllschedules);
 router.post(`/`, authorizationRoleAdmin, SchedulesController.createSchedules);
+router.get(`/myschedule`, SchedulesController.getScheduleUserLogin);
 router.get(`/:scheduleId`, SchedulesController.getScheduleById); // admin and sales
 
 module.exports = router;
