@@ -14,6 +14,8 @@ let idUser2;
 let idUser3;
 let idOrder1;
 let idOrder2;
+let idOrder3;
+let idOrder4;
 let access_token_admin;
 let access_token_sales;
 let access_token_chika;
@@ -190,10 +192,42 @@ beforeAll(async () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
+  const inputO3 = {
+    storeId: new ObjectId(idStore1),
+    userId: new ObjectId(idUser2),
+    productOrder: [
+      {
+        productId: new ObjectId(idProduct1),
+        qtySold: 200,
+        price: 117000,
+      },
+    ],
+    status: "pending",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  const inputO4 = {
+    storeId: new ObjectId(idStore1),
+    userId: new ObjectId(idUser2),
+    productOrder: [
+      {
+        productId: new ObjectId(idProduct1),
+        qtySold: 200,
+        price: 117000,
+      },
+    ],
+    status: "pending",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
   let seedOrders1 = await testDb.collection("orders").insertOne(inputO1);
   idOrder1 = seedOrders1.insertedId;
   let seedOrders2 = await testDb.collection("orders").insertOne(inputO2);
   idOrder2 = seedOrders2.insertedId;
+  let seedOrders3 = await testDb.collection("orders").insertOne(inputO3);
+  idOrder3 = seedOrders3.insertedId;
+  let seedOrders4 = await testDb.collection("orders").insertOne(inputO4);
+  idOrder4 = seedOrders4.insertedId;
 });
 
 afterAll(async () => {
@@ -648,6 +682,53 @@ describe("POST /orders", () => {
       .set("Authorization", `Bearer ${access_token_sales}`);
 
     expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
+
+describe("DELETE /orders", () => {
+  test("Success without update status should return message", async () => {
+    const response = await request(app)
+      .delete(`/orders/${idOrder3}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Failed if order not registered should return message", async () => {
+    const response = await request(app)
+      .delete(`/orders/65acccf2d069db871ebdfbda`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Token", async () => {
+    const response = await request(app).delete(`/orders/${idOrder4}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Admin Token", async () => {
+    const response = await request(app)
+      .delete(`/orders/${idOrder4}`)
+      .set("Authorization", `Bearer ${access_token_chika}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if order status has been confirmed", async () => {
+    const response = await request(app)
+      .delete(`/orders/${idOrder1}`)
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(400);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });

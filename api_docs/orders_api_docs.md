@@ -391,6 +391,62 @@ Update Orders, For Admin && Author Only, Can't update confirmed orders
 }
 ```
 
+### DELETE /orders/:id
+
+Delete Orders, For Admin Only, Can't delete confirmed orders
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token"
+}
+```
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+{
+  "message": "Delete Orders With ID 65acec2d7dd9323adb420411 Successful"
+}
+```
+
+#### Response (400- Bad Request - order already confirmed)
+
+```json
+{
+  "message": "Unable to delete confirmed Order"
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (403- Forbidden)
+
+```json
+{
+  "message": "Forbidden Access. Admin only"
+}
+```
+
+#### Response (404- Not Found - unregistered Order)
+
+```json
+{
+  "message": "No order found with this ID"
+}
+```
+
 ## GLOBAL ERROR
 
 ### Response (500 - Internal Server Error)
