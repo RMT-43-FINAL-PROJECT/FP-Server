@@ -63,6 +63,13 @@ class SchedulesController {
     return findUserByID
   }
 
+  static async findSchedule(scheduleId) {
+    let findSchedule = await db.collection("schedules").findOne(
+      { _id: new ObjectId(scheduleId) }
+    )
+    return findSchedule
+  }
+
   static async findExistingSchedule(storeId, userId, time) {
     let existingSchedule = await db.collection("schedules").findOne({
       storeId: new ObjectId(storeId),
@@ -216,6 +223,21 @@ class SchedulesController {
       ]
       let getMySchedule = await db.collection("schedules").aggregate(agg).toArray()
       res.status(200).json(getMySchedule)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async deleteSchedule(req, res, next) {
+    try {
+      let { scheduleId } = req.params
+      let checkingSchedule = await SchedulesController.findSchedule(scheduleId)
+      if (!checkingSchedule) {
+        throw { name: 'No schedule found with this ID' }
+      }
+      await db.collection("schedules").deleteOne({ _id: new ObjectId(scheduleId) })
+      res.status(200).json({ message: `Schedule with ID ${scheduleId} has been deleted` })
     } catch (error) {
       console.log(error)
       next(error)
