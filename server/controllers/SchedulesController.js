@@ -124,6 +124,57 @@ class SchedulesController {
     }
   }
 
+  static async getScheduleById(req, res, next) {
+    try {
+      let { scheduleId } = req.params
+      const agg = [
+        {
+          '$match': {
+            '_id': new ObjectId(scheduleId)
+          }
+        }, {
+          '$lookup': {
+            'from': 'stores',
+            'localField': 'storeId',
+            'foreignField': '_id',
+            'as': 'storeInformations'
+          }
+        }, {
+          '$lookup': {
+            'from': 'users',
+            'localField': 'userId',
+            'foreignField': '_id',
+            'as': 'userInformations'
+          }
+        }, {
+          '$unwind': {
+            'path': '$storeInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$unwind': {
+            'path': '$userInformations',
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            'storeId': 0,
+            'userId': 0,
+            'userInformations.password': 0
+          }
+        }
+      ]
+      let existingSchedule = await db.collection("schedules").aggregate(agg).toArray()
+      if (existingSchedule.length <= 0) {
+        throw { name: 'No schedule found with this ID' }
+      }
+      res.status(200).json(existingSchedule[0])
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`

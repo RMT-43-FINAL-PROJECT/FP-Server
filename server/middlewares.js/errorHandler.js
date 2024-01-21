@@ -124,6 +124,10 @@ function errorHandler(error, req, res, next) {
       statusCode = 400;
       message = error.name;
       break;
+    case "No schedule found with this ID":
+      statusCode = 404;
+      message = error.name;
+      break;
     case "Store with that ID has not been verified":
       statusCode = 400;
       message = error.name;
