@@ -321,6 +321,66 @@ class OrdersController {
       next(error);
     }
   }
+  static async editOrders(req, res, next) {
+    try {
+      const { role, _id: userLoggedId } = req.user;
+      const { id } = req.params;
+      let { productOrder, status } = req.body;
+
+      const orderToEditId = new ObjectId(id);
+
+      const orderToEdit = await db
+        .collection("orders")
+        .findOne({ _id: orderToEditId });
+
+      if (!orderToEdit) {
+        throw { name: `No order found with this ID` };
+      }
+
+      if (orderToEdit.status === `confirmed`) {
+        throw { name: `Unable to update confirmed Order` };
+      }
+
+      if (
+        role !== `admin` &&
+        userLoggedId.toString() !== orderToEdit.userId.toString()
+      ) {
+        throw { name: `Forbidden Access. Admin && related Sales only` };
+      }
+
+      if (productOrder.length === 0) {
+        throw { name: `Product order is required` };
+      }
+      if (!Array.isArray(productOrder)) {
+        throw { name: `Product order must be an Array` };
+      }
+
+      const productInput = productOrder.map((el) => {
+        el.productId = new ObjectId(el.productId);
+        return el;
+      });
+
+      if (!status) {
+        status = `pending`;
+      }
+      const input = {
+        productOrder: productInput,
+        status,
+        updatedAt: new Date(),
+      };
+
+      await db
+        .collection("orders")
+        .updateOne({ _id: orderToEditId }, { $set: input });
+
+      res
+        .status(200)
+        .json({ message: `Update Orders With ID ${orderToEditId} Successful` });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;

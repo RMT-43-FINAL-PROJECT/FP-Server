@@ -300,6 +300,97 @@ Create Orders
 }
 ```
 
+### PUT /orders/:id
+
+Update Orders, For Admin && Author Only, Can't update confirmed orders
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Admin Token || Author Token"
+}
+```
+
+#### Request Body
+
+//field ID harus string atau benar- benar ObjectId(`65a6661db4fe8ae80cec2a19`), jangan string "ObjectId(`65a6661db4fe8ae80cec2a19`)"
+//kalau untuk di Mobile bisa dimatikan saja update statusnya.. Biar hanya WEB (admin) yg update status..
+
+```json
+{
+  "status": "confirmed", <optional>
+  "productOrder": [
+    {
+      "productId": "65a7ee0845ca2a04fba0a035",
+      "qtySold": 2,
+      "price": 23000
+    },
+    {
+      "productId": "65a7ee0845ca2a04fba0a036",
+      "qtySold": 9,
+      "price": 13000
+    }
+  ]
+}
+```
+
+#### Response (200)
+
+```json
+{
+  "message": "Update Orders With ID 65a666b4ef33f639c273f75f Successful"
+}
+```
+
+#### Response (400- Bad Request - !productOrder)
+
+```json
+{
+  "message": "Product order is required"
+}
+```
+
+#### Response (400- Bad Request - productOrder is not Array)
+
+```json
+{
+  "message": "Product order must be an Array"
+}
+```
+
+#### Response (400- Bad Request - order already confirmed)
+
+```json
+{
+  "message": "Unable to update confirmed Order"
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
+#### Response (403- Forbidden)
+
+```json
+{
+  "message": "Forbidden Access. Admin && related Sales only"
+}
+```
+
+#### Response (404- Not Found - unregistered Order)
+
+```json
+{
+  "message": "No order found with this ID"
+}
+```
+
 ## GLOBAL ERROR
 
 ### Response (500 - Internal Server Error)

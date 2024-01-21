@@ -519,3 +519,136 @@ describe("POST /orders", () => {
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
+
+describe("POST /orders", () => {
+  test("Success without update status should return message", async () => {
+    const newInput = {
+      productOrder: [
+        {
+          productId: idProduct1,
+          qtySold: 70,
+          price: 117000,
+        },
+        {
+          productId: idProduct1,
+          qtySold: 50,
+          price: 32000,
+        },
+      ],
+    };
+    const response = await request(app)
+      .put(`/orders/${idOrder1}`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Failed without productOrder should return message", async () => {
+    const newInput = {
+      productOrder: [],
+    };
+    const response = await request(app)
+      .put(`/orders/${idOrder1}`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if productOrder is not Array should return message", async () => {
+    const newInput = {
+      productOrder: {
+        productId: idProduct1,
+        qtySold: 5,
+        price: 32000,
+      },
+    };
+    const response = await request(app)
+      .put(`/orders/${idOrder1}`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if order not registered should return message", async () => {
+    const newInput = {
+      productOrder: [
+        {
+          productId: idProduct1,
+          qtySold: 70,
+          price: 117000,
+        },
+        {
+          productId: idProduct1,
+          qtySold: 50,
+          price: 32000,
+        },
+      ],
+    };
+    const response = await request(app)
+      .put(`/orders/65a666b4ef33f639c273f75f`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Token", async () => {
+    const response = await request(app).post(`/orders/${idOrder1}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed without Admin || Related Sales Token", async () => {
+    const response = await request(app)
+      .put(`/orders/${idOrder1}`)
+      .set("Authorization", `Bearer ${access_token_chika}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+  test("Failed if order status has been confirmed", async () => {
+    const response = await request(app)
+      .put(`/orders/${idOrder2}`)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+
+  test("Success with update status should return message", async () => {
+    const newInput = {
+      status: "confirmed",
+      productOrder: [
+        {
+          productId: idProduct1,
+          qtySold: 70,
+          price: 117000,
+        },
+        {
+          productId: idProduct1,
+          qtySold: 50,
+          price: 32000,
+        },
+      ],
+    };
+    const response = await request(app)
+      .put(`/orders/${idOrder1}`)
+      .send(newInput)
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});
