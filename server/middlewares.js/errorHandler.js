@@ -23,6 +23,30 @@ function errorHandler(error, req, res, next) {
             statusCode = 400
             message = error.name
             break
+        case 'Category is required':
+            statusCode = 400
+            message = error.name
+            break
+        case 'Stock is required':
+            statusCode = 400
+            message = error.name
+            break
+        case 'Price is required':
+            statusCode = 400
+            message = error.name
+            break
+        case 'DiscQty is required':
+            statusCode = 400
+            message = error.name
+            break
+        case 'DiscPercent is required':
+            statusCode = 400
+            message = error.name
+            break
+        case 'IsAvailable is required':
+            statusCode = 400
+            message = error.name
+            break
         case 'Name must be at least 4 characters':
             statusCode = 400
             message = error.name
