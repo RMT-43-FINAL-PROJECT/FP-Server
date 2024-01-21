@@ -76,9 +76,10 @@ function validateProducts({ name, category, stock, price, discQty, discPercent, 
     let isAvailableNotEmpty = validator.isEmpty(isAvailable)
     if (isAvailableNotEmpty) {
         throw { name: 'IsAvailable is required' }
+    }
 }
-  
-function validateInputUpdate({ name, email, mobilePhone, address }) {          
+
+function validateInputUpdate({ name, email, mobilePhone, address }) {
     let isEmailNotEmpty = validator.isEmpty(email)
     if (isEmailNotEmpty) {
         throw { name: 'Email is required' }

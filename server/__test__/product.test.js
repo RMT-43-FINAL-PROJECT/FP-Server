@@ -161,15 +161,15 @@ describe("GET /products/:id", () => {
         expect(response.body).toHaveProperty("discPercent", expect.any(Number));
         expect(response.body).toHaveProperty("isAvailable", expect.any(Boolean));
     });
-    test("Failed with wrong ID should return message", async () => {
-        const falseId = `65a7ee0845ca2a04fba0a0qq`;
+    test("Product not found", async () => {
+        const wrongId = `65a7ee0845ca2a04fba0b100`;
         const response = await request(app)
-            .get(`/products/${falseId}`)
+            .get(`/products/${wrongId}`)
             .set("Authorization", `Bearer ${access_token_sales}`);
 
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(404);
         expect(response.body).toBeInstanceOf(Object);
-        expect(response.body).toHaveProperty("message", expect.any(String));
+        expect(response.body).toHaveProperty("message", `Product Not Found`);
     });
     test("Invalid token", async () => {
         const response = await request(app)
