@@ -377,6 +377,29 @@ class OrdersController {
         .status(200)
         .json({ message: `Update Orders With ID ${orderToEditId} Successful` });
     } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
+  static async deleteOrders(req, res, next) {
+    try {
+      const { id } = req.params;
+      const _id = new ObjectId(id);
+
+      const order = await db.collection("orders").findOne(_id);
+      if (!order) {
+        throw { name: `No order found with this ID` };
+      }
+
+      if (order.status === `confirmed`) {
+        throw { name: `Unable to delete confirmed Order` };
+      }
+      await db.collection("orders").deleteOne({ _id: _id });
+
+      res
+        .status(200)
+        .json({ message: `Delete Orders With ID ${_id} Successful` });
+    } catch (error) {
       console.log(error);
       next(error);
     }

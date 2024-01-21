@@ -9,6 +9,7 @@ router.use(authentication);
 router.get(`/`, authorizationRoleAdmin, OrdersController.getAll);
 router.post(`/`, OrdersController.addOrders);
 router.put(`/:id`, OrdersController.editOrders);
+router.delete(`/:id`, authorizationRoleAdmin, OrdersController.deleteOrders);
 router.get(`/:id`, OrdersController.getDetail);
 
 module.exports = router;
