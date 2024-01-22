@@ -25,5 +25,6 @@ router.delete(`/:idUser`, authorizationRoleAdmin, UsersController.deleteUser)
 router.get(`/finduser-email`, authorizationRoleAdmin, UsersController.getUserByEmail)
 router.get(`/finduser/:idUser`, authorizationRoleAdmin, UsersController.getUserByIdParams)
 router.get(`/dashboard`, authorizationRoleAdmin, UsersController.getUserForDashboard)
+router.get(`/select`, authorizationRoleAdmin, UsersController.getSelectUsers)
 
 module.exports = router
