@@ -12,19 +12,16 @@ cloudinary.config({
 class ProductsController {
   static async getAll(req, res, next) {
     try {
-      if (req.query.available === "true") {
-        const data = await db.collection("products").aggregate([
-          {
-            '$match': {
-              'isAvailable': true
-            }
-          }
-        ]).toArray();
-        res.status(200).json(data);
-      } else {
-        const data = await db.collection("products").find().toArray();
-        res.status(200).json(data);
+      const searchQuery = req.query.search;
+      const baseQuery = {};
+      if (searchQuery) {
+        baseQuery.name = { $regex: new RegExp(searchQuery, 'i') };
       }
+      if (req.query.available === 'true') {
+        baseQuery.isAvailable = true;
+      }
+      const data = await db.collection('products').find(baseQuery).toArray();
+      res.status(200).json(data);
     } catch (error) {
       console.log(error);
       next(error);
