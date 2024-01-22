@@ -635,8 +635,8 @@ scheduleId: req.params
 
 ```json
 {
-    "isCompleted": true,
-    "updatedAt": "2024-01-21T08:07:49.164Z",
+    "latitude": -6.188789464341358,
+    "longitude": 106.82608477252883,
 }
 ```
 
