@@ -794,6 +794,10 @@ describe("GET /orders/user", () => {
       expect.any(Number)
     );
     expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "finalPrice",
+      expect.any(Number)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
       "name",
       expect.any(String)
     );
@@ -807,6 +811,10 @@ describe("GET /orders/user", () => {
     );
     expect(response.body.data[0].productOrder[0]).toHaveProperty(
       "billPerItem",
+      expect.any(Number)
+    );
+    expect(response.body.data[0].productOrder[0]).toHaveProperty(
+      "discPerItem",
       expect.any(Number)
     );
     expect(response.body.data[0]).toHaveProperty(
