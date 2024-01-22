@@ -1,9 +1,9 @@
-const { db } = require("../configs/mongodb")
-const { hashPassword, comparePassword } = require("../helpers/bcryptjs")
-const { signToken } = require("../helpers/jwt")
-const { validateRegister, validateEmail, validateInputUpdate } = require("../helpers/validator")
-const { ObjectId } = require('mongodb')
-const cloudinary = require("../configs/cloudinary");
+let { db } = require("../configs/mongodb")
+let { hashPassword, comparePassword } = require("../helpers/bcryptjs")
+let { signToken } = require("../helpers/jwt")
+let { validateRegister, validateEmail, validateInputUpdate } = require("../helpers/validator")
+let { ObjectId } = require('mongodb')
+let cloudinary = require("../configs/cloudinary");
 
 class UsersController {
   static async getAllUser(req, res, next) {
@@ -21,7 +21,7 @@ class UsersController {
         query.name = { $regex: new RegExp(name, 'i') }
       }
 
-      const data = await db.collection("users").find(query, {
+      let data = await db.collection("users").find(query, {
         projection: { password: 0 }
       }).toArray()
       res.status(200).json(data)
@@ -228,6 +228,79 @@ class UsersController {
       }
       await db.collection("users").deleteOne({ _id: new ObjectId(idUser) })
       return res.status(200).json({ message: `${findUser.name} has been deleted` })
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async getUserForDashboard(req, res, next){
+    try {
+      let result = await db.collection("users").aggregate([
+        {
+          '$project': {
+            'address': 0, 
+            'password': 0, 
+            'email': 0, 
+            'createdAt': 0, 
+            'updatedAt': 0, 
+            'mobilePhone': 0
+          }
+        }, {
+          '$match': {
+            'role': 'sales'
+          }
+        }, {
+          '$lookup': {
+            'from': 'orders', 
+            'localField': '_id', 
+            'foreignField': 'userId', 
+            'as': 'orders'
+          }
+        }, {
+          '$project': {
+            'orders.userId': 0, 
+            'orders.createdAt': 0, 
+            'orders.updatedAt': 0
+          }
+        }
+      ]).toArray()
+      let countingBill = result.map(user => {
+        let billPerUser = 0
+        let orders = user.orders.map(order => {
+          let billPerOrder = 0
+          let res = order.productOrder.map(product => {
+            let billPerProduct = 0
+            billPerUser += product.price * product.qtySold
+            billPerProduct = product.price * product.qtySold
+            billPerOrder += billPerProduct
+            return {
+              billPerProduct,
+              ...product,
+            }
+          })
+          return {
+            billPerOrder,
+            ...order,
+            productOrder: res
+          }
+        })
+        return {
+          billPerUser,
+          ...user,
+          orders,
+        }
+      })
+      let totalBill = 0
+      countingBill.forEach(bill => {
+        totalBill += bill.billPerUser
+      })
+      let finalResult = {
+        countData: result.length,
+        totalBill,
+        data: countingBill
+      }
+      return res.status(200).json(finalResult)
     } catch (error) {
       console.log(error)
       next(error)
