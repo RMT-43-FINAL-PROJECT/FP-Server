@@ -487,7 +487,7 @@ class OrdersController {
                         qtySold: {
                           $arrayElemAt: ["$productOrder.qtySold", "$$index"],
                         },
-                        price: {
+                        finalPrice: {
                           $arrayElemAt: ["$productOrder.price", "$$index"],
                         },
                       },
@@ -526,10 +526,14 @@ class OrdersController {
 
       data.map((el) => {
         el.totalBill = 0;
+        el.discountValue = 0;
         el.productOrder.map((pro) => {
           pro.billPerItem = 0;
-          pro.billPerItem = pro.qtySold * pro.price;
+          pro.billPerItem = pro.qtySold * pro.finalPrice;
           el.totalBill += pro.billPerItem;
+          pro.discPerItem = 0;
+          pro.discPerItem = pro.qtySold * (pro.price - pro.finalPrice);
+          el.discountValue += pro.discPerItem;
         });
         if (el.status === `confirmed`) {
           confirmedValue += el.totalBill;
