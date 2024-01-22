@@ -545,6 +545,131 @@ class OrdersController {
       next(error);
     }
   }
+  static async getMonthlyPerUser(req, res, next) {
+    try {
+      const { role, _id: userLoggedId } = req.user;
+
+      const thisYear = new Date().getFullYear();
+      const thisMonth = new Date().getMonth() + 1;
+
+      // console.log(thisMonth, thisYear);
+
+      let data = await db
+        .collection("orders")
+        .aggregate([
+          {
+            $match: {
+              status: "confirmed",
+              userId: new ObjectId(userLoggedId),
+            },
+          },
+          {
+            $project: {
+              year: {
+                $year: "$updatedAt",
+              },
+              month: {
+                $month: "$updatedAt",
+              },
+              orders: "$$ROOT",
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: "$year",
+                month: "$month",
+              },
+              count: {
+                $sum: 1,
+              },
+              orders: {
+                $push: "$orders",
+              },
+            },
+          },
+          {
+            $sort: {
+              "_id.year": 1,
+              "_id.month": 1,
+            },
+          },
+        ])
+        .toArray();
+
+      let result = {};
+
+      (result[thisYear] = {
+        1: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        2: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        3: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        4: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        5: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        6: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        7: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        8: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        9: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        10: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        11: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+        12: {
+          count: 0,
+          totalConfirmedValue: 0,
+        },
+      }),
+        data.map((el) => {
+          el.totalConfirmedValue = 0;
+          el.orders.map((order) => {
+            order.productOrder.map((po) => {
+              el.totalConfirmedValue += po.qtySold * po.price;
+            });
+          });
+          result[el._id.year][el._id.month][`count`] += el.count;
+          result[el._id.year][el._id.month][`totalConfirmedValue`] +=
+            el.totalConfirmedValue;
+
+          delete el.orders;
+          return el;
+        });
+
+      res.status(200).json(result);
+    } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
