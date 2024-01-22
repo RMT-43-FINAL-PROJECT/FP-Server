@@ -926,3 +926,32 @@ describe("GET /orders/monthly/user", () => {
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
+
+describe("GET /orders/dashboard", () => {
+  test("Success should return this month count and confirmedValue", async () => {
+    const response = await request(app)
+      .get("/orders/dashboard")
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    console.log(response);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("_id", expect.any(Object));
+    expect(response.body._id).toBeInstanceOf(Object);
+    expect(response.body._id).toHaveProperty("year", expect.any(Number));
+    expect(response.body._id).toHaveProperty("month", expect.any(Number));
+    expect(response.body).toHaveProperty("count", expect.any(Number));
+    expect(response.body).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+  });
+
+  test("Failed without  Token", async () => {
+    const response = await request(app).get("/orders/user");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});

@@ -670,6 +670,71 @@ class OrdersController {
       next(error);
     }
   }
+  static async getThisMonthDashboard(req, res, next) {
+    try {
+      const thisYear = new Date().getFullYear();
+      const thisMonth = new Date().getMonth() + 1;
+
+      // console.log(thisMonth, thisYear);
+
+      let data = await db
+        .collection("orders")
+        .aggregate([
+          {
+            $match: {
+              status: "confirmed",
+            },
+          },
+          {
+            $project: {
+              year: {
+                $year: "$updatedAt",
+              },
+              month: {
+                $month: "$updatedAt",
+              },
+              orders: "$$ROOT",
+            },
+          },
+          {
+            $match: {
+              year: thisYear,
+              month: thisMonth,
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: "$year",
+                month: "$month",
+              },
+              count: {
+                $sum: 1,
+              },
+              orders: {
+                $push: "$orders",
+              },
+            },
+          },
+        ])
+        .toArray();
+      data.map((el) => {
+        el.totalConfirmedValue = 0;
+        el.orders.map((order) => {
+          order.productOrder.map((po) => {
+            el.totalConfirmedValue += po.qtySold * po.price;
+          });
+        });
+        delete el.orders;
+        return el;
+      });
+
+      res.status(200).json(data[0]);
+    } catch (error) {
+      // console.log(error);
+      next(error);
+    }
+  }
   // static async template(req, res, next) {
   //   try {
   //     const data = `template`;
