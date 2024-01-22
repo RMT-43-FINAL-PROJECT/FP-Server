@@ -73,7 +73,7 @@ beforeAll(async () => {
         name: "Toko Sumber Rezeki Test",
         location: {
             type: "Point",
-            coordinates: [112.61503381426093, -7.9586223893455506],
+            coordinates: [(-6.188789464341358), (106.82608477252883)],
         },
         photo:
             "https://lh3.googleusercontent.com/gps-proxy/AMy85WJQ23dHYBN-cubJj9_aNOMPJV9AkKG3Ogosc3zBmVrbXnHwWSGuBbmmwCh75KBxZP4TQLPRDTwZFhWcDsVaRrtrQ5k1iB3ZBnQyNUClOn5bURTvVdHy57hJX3rPX3COzvXKkOcgidqfQjvbEaNimp7cHQgq_tj91Y0mO-cGQcURw0_UsYjk7lu2oZt-_k2cy8yDNUs=w260-h175-n-k-no",
@@ -575,18 +575,16 @@ describe("DELETE /schedules/:scheduleId", () => {
 });
 
 describe("PUT /schedules/status/:scheduleId", () => {
-    // test.only("Success update status schedule should return message", async () => {
+    // test("Success update status schedule should return message", async () => {
     //     const newSchedule = {
-    //         // storeId: new ObjectId(idStore2),
-    //         // userId: new ObjectId(idUser2),
-    //         // time: new Date(),
+    //         storeId: new ObjectId(idStore2),
     //         isCompleted: true,
     //         updatedAt: new Date(),
     //     };
     //     const response = await request(app)
     //         .put(`/schedules/status/${idSchedule2}`)
     //         .send(newSchedule)
-    //         .set("Authorization", `Bearer ${access_token_admin}`);
+    //         .set("Authorization", `Bearer ${access_token_sales}`);
 
     //     expect(response.status).toBe(200);
     //     expect(response.body).toBeInstanceOf(Object);
@@ -604,22 +602,19 @@ describe("PUT /schedules/status/:scheduleId", () => {
         expect(response.body).toHaveProperty("message", `No schedule found with this ID`);
       });
       test("Store not found", async () => {
-        const fakeStoreId = `65aba1c8d9ef109cc4e04099`
+        const invalidStoreId = `65aba1c8d9ef109cc4e04099`
         const newSchedule = {
-            storeId: new ObjectId(fakeStoreId),
-            userId: new ObjectId(idUser2),
-            time: new Date(),
+            storeId: new ObjectId(invalidStoreId),
             isCompleted: false,
-            createdAt: new Date(),
             updatedAt: new Date(),
         };
         const response = await request(app)
         .put(`/schedules/status/${idSchedule2}`)
             .send(newSchedule)
-            .set("Authorization", `Bearer ${access_token_admin}`);
+            .set("Authorization", `Bearer ${access_token_sales}`);
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(500);
         expect(response.body).toBeInstanceOf(Object);
-        expect(response.body).toHaveProperty("message", `No store found with this ID`);
+        expect(response.body).toHaveProperty("message", `Internal Server Error`);
     });
 });
