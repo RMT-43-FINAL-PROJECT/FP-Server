@@ -9,6 +9,7 @@ router.use(authentication);
 router.get(`/`, authorizationRoleAdmin, OrdersController.getAll);
 router.post(`/`, OrdersController.addOrders);
 router.get(`/user`, OrdersController.getPerUser);
+router.get(`/monthly/user`, OrdersController.getMonthlyPerUser);
 router.put(`/:id`, OrdersController.editOrders);
 router.delete(`/:id`, authorizationRoleAdmin, OrdersController.deleteOrders);
 router.get(`/:id`, OrdersController.getDetail);

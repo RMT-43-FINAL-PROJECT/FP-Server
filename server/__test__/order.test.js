@@ -831,3 +831,98 @@ describe("GET /orders/user", () => {
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
+
+describe("GET /orders/monthly/user", () => {
+  test("Success should return list of orders of a User with count and confirmedValue", async () => {
+    const response = await request(app)
+      .get("/orders/monthly/user")
+      .set("Authorization", `Bearer ${access_token_sales}`);
+
+    console.log(response);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("2024", expect.any(Object));
+    expect(response.body[2024]).toBeInstanceOf(Object);
+    expect(response.body[2024]).toHaveProperty("1", expect.any(Object));
+    expect(response.body[2024][1]).toBeInstanceOf(Object);
+    expect(response.body[2024][1]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][1]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][2]).toBeInstanceOf(Object);
+    expect(response.body[2024][2]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][2]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][3]).toBeInstanceOf(Object);
+    expect(response.body[2024][3]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][3]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][4]).toBeInstanceOf(Object);
+    expect(response.body[2024][4]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][4]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][5]).toBeInstanceOf(Object);
+    expect(response.body[2024][5]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][5]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][6]).toBeInstanceOf(Object);
+    expect(response.body[2024][6]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][6]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][7]).toBeInstanceOf(Object);
+    expect(response.body[2024][7]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][7]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][8]).toBeInstanceOf(Object);
+    expect(response.body[2024][8]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][8]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][9]).toBeInstanceOf(Object);
+    expect(response.body[2024][9]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][9]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][10]).toBeInstanceOf(Object);
+    expect(response.body[2024][10]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][10]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][11]).toBeInstanceOf(Object);
+    expect(response.body[2024][11]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][11]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+    expect(response.body[2024][12]).toBeInstanceOf(Object);
+    expect(response.body[2024][12]).toHaveProperty("count", expect.any(Number));
+    expect(response.body[2024][12]).toHaveProperty(
+      "totalConfirmedValue",
+      expect.any(Number)
+    );
+  });
+
+  test("Failed without  Token", async () => {
+    const response = await request(app).get("/orders/user");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+  });
+});

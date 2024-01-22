@@ -293,6 +293,87 @@ None
 }
 ```
 
+### GET /orders/monthly/user
+
+Get all data from one User orders collection with order value grouped by month
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Token"
+}
+```
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+{
+  "2024": {
+    "1": {
+      "count": 2,
+      "totalConfirmedValue": 1152000
+    },
+    "2": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "3": {
+      "count": 1,
+      "totalConfirmedValue": 46000
+    },
+    "4": {
+      "count": 1,
+      "totalConfirmedValue": 46000
+    },
+    "5": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "6": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "7": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "8": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "9": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "10": {
+      "count": 1,
+      "totalConfirmedValue": 163000
+    },
+    "11": {
+      "count": 1,
+      "totalConfirmedValue": 46000
+    },
+    "12": {
+      "count": 0,
+      "totalConfirmedValue": 0
+    }
+  }
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
 ### GET /orders/:id
 
 Get detailed data from orders collection with order value
