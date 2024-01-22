@@ -293,6 +293,43 @@ None
 }
 ```
 
+### GET /orders/dashboard
+
+Get all data from this month orders collection with order value
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Token"
+}
+```
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+{
+  "_id": {
+    "year": 2024,
+    "month": 1
+  },
+  "count": 3,
+  "totalConfirmedValue": 1378000
+}
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
+
 ### GET /orders/monthly/user
 
 Get all data from one User orders collection with order value grouped by month
