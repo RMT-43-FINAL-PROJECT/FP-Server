@@ -73,7 +73,6 @@ None
 }
 ```
 
-
 ### GET /products/?available=true
 
 Get all data from products collection with query available status
@@ -136,6 +135,7 @@ None
 ...,
 ]
 ```
+
 #### Response (401- Unauthorized)
 
 ```json
@@ -143,7 +143,6 @@ None
   "message": "Invalid Token"
 }
 ```
-
 
 ### GET /products/:id
 
@@ -158,6 +157,7 @@ Get detailed data from a products
 ```
 
 #### Request Params
+
 ```json
 id: req.params
 ```
@@ -170,17 +170,17 @@ None
 
 ```json
 {
-        "_id": "65a7ee0845ca2a04fba0a034",
-        "name": "Clear Men",
-        "image": "https://cdn.sanity.io/images/92ui5egz/production/558320bfc0afd97d87c2364c52172bece8ee9b46-1080x1080.jpg?w=1400&h=1400&fit=crop&auto=format",
-        "category": "Beauty & Wellbeing",
-        "stock": 10000,
-        "price": 45000,
-        "discQty": 10,
-        "discPercent": 5,
-        "isAvailable": true,
-        "createdAt": "2023-12-15T15:32:06.350Z",
-        "updatedAt": "2024-03-18T14:47:12.101Z"
+  "_id": "65a7ee0845ca2a04fba0a034",
+  "name": "Clear Men",
+  "image": "https://cdn.sanity.io/images/92ui5egz/production/558320bfc0afd97d87c2364c52172bece8ee9b46-1080x1080.jpg?w=1400&h=1400&fit=crop&auto=format",
+  "category": "Beauty & Wellbeing",
+  "stock": 10000,
+  "price": 45000,
+  "discQty": 10,
+  "discPercent": 5,
+  "isAvailable": true,
+  "createdAt": "2023-12-15T15:32:06.350Z",
+  "updatedAt": "2024-03-18T14:47:12.101Z"
 }
 ```
 
@@ -221,10 +221,10 @@ DELETE data from a products
 ```
 
 #### Request Params
+
 ```json
 id: req.params
 ```
-
 
 #### Request Body
 
@@ -278,13 +278,13 @@ Create new products
 
 ```json
 {
-    "name": "Citra",
-    "category": "Beauty & Wellbeing",
-    "stock": 10000,
-    "price": 32000,
-    "discQty": 10,
-    "discPercent": 5,
-    "isAvailable": true,
+  "name": "Citra",
+  "category": "Beauty & Wellbeing",
+  "stock": 10000,
+  "price": 32000,
+  "discQty": 10,
+  "discPercent": 5,
+  "isAvailable": true
 }
 ```
 
@@ -389,6 +389,7 @@ Edit products
 ```
 
 #### Request Params
+
 ```json
 id: req.params
 ```
@@ -397,15 +398,16 @@ id: req.params
 
 ```json
 {
-    "name": "Citra",
-    "category": "Beauty & Wellbeing",
-    "stock": 10000,
-    "price": 32000,
-    "discQty": 10,
-    "discPercent": 5,
-    "isAvailable": true,
+  "name": "Citra",
+  "category": "Beauty & Wellbeing",
+  "stock": 10000,
+  "price": 32000,
+  "discQty": 10,
+  "discPercent": 5,
+  "isAvailable": true
 }
 ```
+
 #### Request File
 
 ```json
@@ -502,6 +504,67 @@ id: req.params
 }
 ```
 
+### GET /products/dashboard
+
+Get all data from orders collection with order value
+
+#### Request Header
+
+```json
+{
+  "Authorization": "Token"
+}
+```
+
+#### Request Body
+
+None
+
+#### Response (200)
+
+```json
+[
+  {
+    "_id": "65a7ee0845ca2a04fba0a032",
+    "name": "Citra",
+    "image": "https://cdn.sanity.io/images/92ui5egz/production/34834f8b9eb575020b518d5c27e3f4164b762263-1080x1080.jpg?w=1400&h=1400&fit=crop&auto=format",
+    "category": "Beauty & Wellbeing",
+    "stock": 10000,
+    "price": 32000,
+    "discQty": 10,
+    "discPercent": 5,
+    "isAvailable": true,
+    "createdAt": "2023-12-15T15:32:06.350Z",
+    "updatedAt": "2024-03-18T14:47:12.101Z",
+    "confirmedOrderValue": 1152000,
+    "confirmedOrderQty": 36
+  },
+  {
+    "_id": "65a7ee0845ca2a04fba0a035",
+    "name": "Sunsilk",
+    "image": "https://cdn.sanity.io/images/92ui5egz/production/6a452ea6283ed10c84efe822b24271d5f4f801df-1080x1080.jpg?w=1400&h=1400&fit=crop&auto=format",
+    "category": "Beauty & Wellbeing",
+    "stock": 10000,
+    "price": 23000,
+    "discQty": 10,
+    "discPercent": 5,
+    "isAvailable": true,
+    "createdAt": "2023-12-15T15:32:06.350Z",
+    "updatedAt": "2024-03-18T14:47:12.101Z",
+    "confirmedOrderValue": 721000,
+    "confirmedOrderQty": 30
+  },
+  ...,
+]
+```
+
+#### Response (401- Unauthorized)
+
+```json
+{
+  "message": "Invalid Token"
+}
+```
 
 ## GLOBAL ERROR
 
