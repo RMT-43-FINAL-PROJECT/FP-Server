@@ -234,16 +234,16 @@ class UsersController {
     }
   }
 
-  static async getUserForDashboard(req, res, next){
+  static async getUserForDashboard(req, res, next) {
     try {
       let result = await db.collection("users").aggregate([
         {
           '$project': {
-            'address': 0, 
-            'password': 0, 
-            'email': 0, 
-            'createdAt': 0, 
-            'updatedAt': 0, 
+            'address': 0,
+            'password': 0,
+            'email': 0,
+            'createdAt': 0,
+            'updatedAt': 0,
             'mobilePhone': 0
           }
         }, {
@@ -252,15 +252,15 @@ class UsersController {
           }
         }, {
           '$lookup': {
-            'from': 'orders', 
-            'localField': '_id', 
-            'foreignField': 'userId', 
+            'from': 'orders',
+            'localField': '_id',
+            'foreignField': 'userId',
             'as': 'orders'
           }
         }, {
           '$project': {
-            'orders.userId': 0, 
-            'orders.createdAt': 0, 
+            'orders.userId': 0,
+            'orders.createdAt': 0,
             'orders.updatedAt': 0
           }
         }
@@ -295,12 +295,54 @@ class UsersController {
       countingBill.forEach(bill => {
         totalBill += bill.billPerUser
       })
+      countingBill.sort((a,b) => {
+        return b.billPerUser - a.billPerUser
+      })
       let finalResult = {
         countData: result.length,
         totalBill,
         data: countingBill
       }
       return res.status(200).json(finalResult)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+
+  static async getSelectUsers(req, res, next) {
+    try {
+      let { role } = req.query
+      let queryMatchRole = {
+        '$match': {}
+      }
+      if (role) {
+        if (role !== 'sales' && role !== "admin") {
+          throw { name: "Role is invalid" }
+        }
+        queryMatchRole = {
+          '$match': {
+            'role': role
+          }
+        }
+      }
+      const agg = [
+        {
+          '$project': {
+            'email': 0,
+            'password': 0,
+            'mobilePhone': 0,
+            'createdAt': 0,
+            'updatedAt': 0,
+            'photo': 0,
+            'address': 0,
+            'joinDate': 0
+          }
+        },
+        queryMatchRole
+      ]
+      let result = await db.collection("users").aggregate(agg).toArray()
+      return res.status(200).json(result)
     } catch (error) {
       console.log(error)
       next(error)
