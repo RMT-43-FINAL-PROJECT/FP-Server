@@ -207,7 +207,7 @@ class ProductsController {
             });
           }
         });
-        // delete el.orders;
+        delete el.orders;
         return el;
       });
       data.sort(function (a, b) {
