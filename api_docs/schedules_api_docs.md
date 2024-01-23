@@ -416,10 +416,7 @@ Create new schedules
 {
     "storeId": "65a660db743349cd8f43eda7",
     "userId": "65a65bd99c151b606d6286a6",
-    "time": "2024-01-29T11:21:24.667Z",
-    "isCompleted": false,
-    "createdAt": "2024-01-21T08:07:49.164Z",
-    "updatedAt": "2024-01-21T08:07:49.164Z",
+    "time": "2024-01-23"
 }
 
 ```
