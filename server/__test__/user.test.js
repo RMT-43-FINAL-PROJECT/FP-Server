@@ -631,6 +631,60 @@ describe("GET /users/dashboard", () => {
   });
 });
 
+describe("GET /users/select", () => {
+  test("SUCCESS : FIND USER sales for web selection", async () => {
+    const response = await request(app)
+      .get("/users/select?role=sales")
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toBeInstanceOf(Object);
+    expect(response.body[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("role", expect.any(String));
+  });
+  test("SUCCESS : FIND USER admin for web selection", async () => {
+    const response = await request(app)
+      .get("/users/select?role=admin")
+      .set("Authorization", `Bearer ${access_token_admin}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toBeInstanceOf(Object);
+    expect(response.body[0]).toHaveProperty("_id", expect.any(String));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("role", expect.any(String));
+  });
+
+  test("FAILED : without token", async () => {
+    const response = await request(app).get("/users/select?role=sales");
+    // .set("Authorization", `Bearer ${access_token_admin}`);
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", "Invalid Token");
+  });
+  test("FAILED : without admin token", async () => {
+    const response = await request(app)
+      .get("/users/select?role=sales")
+      .set("Authorization", `Bearer ${access_token_sales}`);
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Forbidden Access. Admin only"
+    );
+  });
+  test("FAILED : without admin or sales roles token", async () => {
+    const response = await request(app)
+      .get("/users/select?role=blabla")
+      .set("Authorization", `Bearer ${access_token_admin}`);
+    expect(response.status).toBe(400);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", "Role is invalid");
+  });
+});
+
 describe("GET /users/:idUser", () => {
   test("SUCCESS : FIND USER BY ID PARAMS ", async () => {
     const response = await request(app)
