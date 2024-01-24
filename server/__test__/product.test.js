@@ -229,7 +229,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
-    await client.connect();
+    // await client.connect();
     const testDb = client.db("fp-rmt-43-test");
     await testDb.collection("products").deleteMany({});
     await testDb.collection("stores").deleteMany({});
