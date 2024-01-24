@@ -70,6 +70,13 @@ class ProductsController {
         discPercent,
         isAvailable,
       });
+      let isAvailableBoolean
+      if (isAvailable === `true`) {
+        isAvailableBoolean = true
+      }
+      if (isAvailable === `false`) {
+        isAvailableBoolean = false
+      }
       const data = await db.collection("products").insertOne({
         name,
         image: dataImage.secure_url,
@@ -78,7 +85,7 @@ class ProductsController {
         price,
         discQty,
         discPercent,
-        isAvailable,
+        isAvailable: isAvailableBoolean,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -93,12 +100,63 @@ class ProductsController {
 
   static async updateProduct(req, res, next) {
     try {
-      const base64File = Buffer.from(req.file.buffer).toString(`base64`);
-      const dataURI = `data:${req.file.mimetype};base64,${base64File}`;
-      const dataImage = await cloudinary.uploader.upload(dataURI, {
-        public_id: `${req.file.originalname}_${randomUUID()}`,
-        folder: `products/image`,
-      });
+      if (req.file) {
+        const base64File = Buffer.from(req.file.buffer).toString(`base64`);
+        const dataURI = `data:${req.file.mimetype};base64,${base64File}`;
+        const dataImage = await cloudinary.uploader.upload(dataURI, {
+          public_id: `${req.file.originalname}_${randomUUID()}`,
+          folder: `products/image`,
+        });
+        const data = await db
+          .collection("products")
+          .findOne({ _id: new ObjectId(req.params.id) });
+        if (!data) {
+          throw { name: `Product Not Found` };
+        }
+        const {
+          name,
+          category,
+          stock,
+          price,
+          discQty,
+          discPercent,
+          isAvailable,
+        } = req.body;
+        validateProducts({
+          name,
+          category,
+          stock,
+          price,
+          discQty,
+          discPercent,
+          isAvailable,
+        });
+        let isAvailableBoolean
+        if (isAvailable === `true`) {
+          isAvailableBoolean = true
+        }
+        if (isAvailable === `false`) {
+          isAvailableBoolean = false
+        }
+        await db.collection("products").updateOne(
+          { _id: new ObjectId(req.params.id) },
+          {
+            $set: {
+              name,
+              image: dataImage.secure_url,
+              category,
+              stock,
+              price,
+              discQty,
+              discPercent,
+              isAvailable: isAvailableBoolean,
+            },
+          }
+        );
+        return res.status(200).json({
+          message: `Update Product With ID ${req.params.id} Successfull`,
+        });
+      }
 
       const data = await db
         .collection("products")
@@ -124,18 +182,24 @@ class ProductsController {
         discPercent,
         isAvailable,
       });
+      let isAvailableBoolean
+      if (isAvailable === `true`) {
+        isAvailableBoolean = true
+      }
+      if (isAvailable === `false`) {
+        isAvailableBoolean = false
+      }
       await db.collection("products").updateOne(
         { _id: new ObjectId(req.params.id) },
         {
           $set: {
             name,
-            image: dataImage.secure_url,
             category,
             stock,
             price,
             discQty,
             discPercent,
-            isAvailable,
+            isAvailable: isAvailableBoolean,
           },
         }
       );
